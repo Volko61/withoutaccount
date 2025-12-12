@@ -2,6 +2,16 @@
    WithoutAccount - Custom Styles
    ======================================== */
 
+/* Font fallback with adjusted metrics to prevent CLS */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
 /* Theme Variables */
 :root {
   /* Light Theme (Default) */
@@ -11,9 +21,9 @@
   --text-primary: #0f172a;
   --text-secondary: #334155; /* Improved contrast: was #475569 */
   --text-muted: #64748b; /* Improved contrast: was #94a3b8 */
-  --accent-primary: #6366f1;
-  --accent-secondary: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --accent-primary: #4f46e5; /* Improved contrast: was #6366f1 */
+  --accent-secondary: #7c3aed; /* Improved contrast: was #8b5cf6 */
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
   --border-color: #e2e8f0;
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.3);
@@ -51,7 +61,7 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif;
 }
 
 /* Glassmorphism Card */
