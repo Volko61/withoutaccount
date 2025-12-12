@@ -990,10 +990,14 @@ function updatePlayhead() {
 
 function handleSeek(e) {
     const rect = elements.timelineRuler.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const scrollLeft = elements.timelineRulerContainer ? elements.timelineRulerContainer.scrollLeft : 0;
+    const x = e.clientX - rect.left + scrollLeft;
     seek(Math.max(0, x / state.zoom));
 
-    const onMove = (m) => seek(Math.max(0, (m.clientX - rect.left) / state.zoom));
+    const onMove = (m) => {
+        const moveX = m.clientX - rect.left + scrollLeft;
+        seek(Math.max(0, moveX / state.zoom));
+    };
     const onUp = () => {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('mouseup', onUp);
@@ -1088,67 +1092,191 @@ function splitClip() {
     renderCanvas();
 }
 
-// Export
+// Export - Uses real-time playback for proper timing synchronization
 async function exportVideo() {
     const modal = document.getElementById('rendering-modal');
     const progressBar = document.getElementById('render-progress');
     const cancelBtn = document.getElementById('btn-cancel-export');
 
     modal.classList.remove('hidden');
-    state.isPlaying = false;
-    if (state.isPlaying) togglePlay();
 
+    // Stop any current playback
+    if (state.isPlaying) {
+        togglePlay();
+    }
+
+    // Calculate total duration based on clips
     let maxTime = 0;
     state.tracks.forEach(t => t.clips.forEach(c => maxTime = Math.max(maxTime, c.start + c.duration)));
-    if (maxTime === 0) maxTime = 10;
+    if (maxTime === 0) {
+        alert('No clips to export!');
+        modal.classList.add('hidden');
+        return;
+    }
 
+    // Seek to start and prepare
     seek(0);
+    renderCanvas();
     progressBar.style.width = '0%';
 
-    const stream = state.canvas.captureStream(state.project.fps);
-    const mimeType = MediaRecorder.isTypeSupported("video/webm; codecs=vp9") ? "video/webm; codecs=vp9" : "video/webm";
-    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
+    const fps = state.project.fps;
+
+    // Setup MediaRecorder with canvas stream
+    const stream = state.canvas.captureStream(fps);
+
+    // Try to add audio tracks from video/audio clips
+    let audioContext = null;
+    let audioDestination = null;
+
+    try {
+        audioContext = new AudioContext();
+        audioDestination = audioContext.createMediaStreamDestination();
+        let hasAudio = false;
+
+        state.tracks.forEach(track => {
+            track.clips.forEach(clip => {
+                if ((clip.type === 'video' || clip.type === 'audio') && clip.mediaElement) {
+                    try {
+                        // Check if not already connected
+                        if (!clip._audioSourceConnected) {
+                            const source = audioContext.createMediaElementSource(clip.mediaElement);
+                            source.connect(audioDestination);
+                            source.connect(audioContext.destination);
+                            clip._audioSourceConnected = true;
+                            hasAudio = true;
+                        }
+                    } catch (e) {
+                        console.log('Could not connect audio source:', e);
+                    }
+                }
+            });
+        });
+
+        if (hasAudio) {
+            audioDestination.stream.getAudioTracks().forEach(track => {
+                stream.addTrack(track);
+            });
+        }
+    } catch (e) {
+        console.log('Audio context error:', e);
+    }
+
+    const mimeType = MediaRecorder.isTypeSupported("video/webm; codecs=vp9")
+        ? "video/webm; codecs=vp9"
+        : MediaRecorder.isTypeSupported("video/webm; codecs=vp8")
+            ? "video/webm; codecs=vp8"
+            : "video/webm";
+
+    const recorder = new MediaRecorder(stream, {
+        mimeType,
+        videoBitsPerSecond: 8000000
+    });
     const chunks = [];
 
-    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.ondataavailable = e => {
+        if (e.data && e.data.size > 0) {
+            chunks.push(e.data);
+        }
+    };
+
+    let cancelled = false;
+    let exportEnded = false;
+
     recorder.onstop = () => {
-        if (modal.classList.contains('hidden')) return;
-        const blob = new Blob(chunks, { type: 'video/webm' });
+        exportEnded = true;
+        if (cancelled) return;
+
+        if (chunks.length === 0) {
+            alert('Export failed: No video data was recorded.');
+            modal.classList.add('hidden');
+            seek(0);
+            return;
+        }
+
+        const blob = new Blob(chunks, { type: mimeType });
+        if (blob.size < 1000) {
+            alert('Export may have failed: Video file is very small.');
+        }
+
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `video-export-${Date.now()}.webm`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+
         modal.classList.add('hidden');
         seek(0);
+        renderCanvas();
+
+        // Cleanup
+        if (audioContext && audioContext.state !== 'closed') {
+            audioContext.close().catch(() => { });
+        }
     };
 
-    recorder.start();
-    state.isPlaying = true;
+    const cleanup = () => {
+        if (audioContext && audioContext.state !== 'closed') {
+            audioContext.close().catch(() => { });
+        }
+    };
 
-    let cancelled = false;
     const handleCancel = () => {
         cancelled = true;
-        state.isPlaying = false;
-        clearInterval(checkInterval);
+        if (state.isPlaying) {
+            togglePlay();
+        }
         recorder.stop();
         modal.classList.add('hidden');
         seek(0);
+        renderCanvas();
         cancelBtn.removeEventListener('click', handleCancel);
+        cleanup();
     };
     cancelBtn.addEventListener('click', handleCancel);
 
+    // Start recording
+    recorder.start(100);
+
+    // Give recorder a moment to initialize
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Start real-time playback - this uses the existing loop() function
+    // which properly handles media sync and canvas rendering
+    state.lastTime = performance.now();
+    state.isPlaying = true;
+    elements.playIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />';
+    syncMedia(true);
+
+    // Monitor progress and stop when complete
     const checkInterval = setInterval(() => {
-        if (cancelled) return;
+        if (cancelled || exportEnded) {
+            clearInterval(checkInterval);
+            return;
+        }
+
         const percent = Math.min(100, (state.currentTime / maxTime) * 100);
         progressBar.style.width = `${percent}%`;
 
         if (state.currentTime >= maxTime) {
             clearInterval(checkInterval);
-            if (state.isPlaying) togglePlay();
-            recorder.stop();
-            cancelBtn.removeEventListener('click', handleCancel);
+
+            // Stop playback
+            if (state.isPlaying) {
+                state.isPlaying = false;
+                elements.playIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                syncMedia(false);
+            }
+
+            // Small delay to ensure last frames are captured
+            setTimeout(() => {
+                if (!exportEnded) {
+                    recorder.stop();
+                }
+                cancelBtn.removeEventListener('click', handleCancel);
+            }, 300);
         }
-    }, 100);
+    }, 50);
 }
 
 // Start

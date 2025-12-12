@@ -1,0 +1,25 @@
+{
+  "name": "withoutaccount",
+  "version": "1.0.0",
+  "description": "WithoutAccount - Client-side tools website",
+  "scripts": {
+    "minify": "node scripts/minify.js",
+    "minify:watch": "node scripts/minify.js --watch",
+    "build": "npm run minify",
+    "dev": "python -m http.server"
+  },
+  "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "clean-css": "^5.3.3",
+    "terser": "^5.37.0",
+    "fs-extra": "^11.2.0",
+    "chokidar": "^4.0.3"
+  },
+  "keywords": [
+    "tools",
+    "client-side",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -30,19 +30,35 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   
-  <!-- Fonts -->
+  <!-- Fonts - Non-blocking with preconnect and preload -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
   
-  <!-- TailwindCSS v4 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- TailwindCSS v4 CDN - Deferred -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/styles.css">
+  <!-- Custom Styles - Non-blocking -->
+  <link rel="preload" as="style" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
   
-  <!-- Theme Script (load early to prevent flash) -->
-  <script src="js/theme.js"></script>
+  <!-- Critical CSS - Inline for instant rendering -->
+  <style>
+    /* Critical CSS to prevent FOUC */
+    :root{--bg-primary:#f8fafc;--bg-secondary:#ffffff;--text-primary:#0f172a;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#a855f7 100%)}
+    .dark{--bg-primary:#0f172a;--bg-secondary:#1e293b;--text-primary:#f8fafc}
+    body{background-color:var(--bg-primary);color:var(--text-primary);font-family:'Inter',system-ui,-apple-system,sans-serif;margin:0}
+    .gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+  
+  <!-- Theme Script - Inline critical portion to prevent flash -->
+  <script>
+    (function(){var t=localStorage.getItem('withoutaccount-theme');if(t==='dark'||(t===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})()
+  </script>
   
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -95,6 +111,8 @@
 </head>
 <body class="min-h-screen">
   
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--accent-primary)] focus:text-white focus:rounded-lg">Skip to main content</a>
   <!-- Header -->
   <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,6 +174,9 @@
     </nav>
   </div>
 
+  <!-- Main Content Landmark -->
+  <main id="main-content">
+  
   <!-- Hero Section -->
   <section class="hero-bg pt-24 pb-16 md:pt-32 md:pb-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -636,6 +657,8 @@
       </div>
     </div>
   </section>
+  
+  </main>
 
   <!-- Footer -->
   <footer class="footer py-12">
@@ -690,7 +713,8 @@
     </div>
   </footer>
 
-  <!-- Main JS -->
-  <script src="js/main.js"></script>
+  <!-- Main JS - Deferred for non-blocking load -->
+  <script defer src="js/theme.js"></script>
+  <script defer src="js/main.js"></script>
 </body>
 </html>
