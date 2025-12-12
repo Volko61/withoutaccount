@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free PDF Editor - Draw, Sign, Text, Shapes | WithoutAccount</title>
+  <meta name="description" content="Free online PDF editor. Edit PDFs, add text, sign documents, draw, highlight, and manage pages. 100% private, runs in your browser.">
+  <meta name="keywords" content="pdf editor, edit pdf online, sign pdf, draw on pdf, add text to pdf, free pdf tool, no account">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/pdf-editor.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "PDF Editor",
+        "item": "https://withoutaccount.com/tools/pdf-editor.html"
+      }]
+    }
+  </script>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- More Tools -->
+  <!-- <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- PDF.js and pdf-lib CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/downloadjs@1.4.7/download.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <style>
+    html, body { overflow: hidden; height: 100%; }
+    
+    .editor-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .editor-wrapper.fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--bg-primary);
+    }
+    
+    .editor-wrapper.fullscreen .editor-header { display: none; }
+    
+    .editor-main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      gap: 0;
+    }
+    
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      width: 56px;
+      flex-shrink: 0;
+      transition: width 0.2s ease;
+    }
+
+    .toolbar.expanded {
+      width: 200px;
+    }
+    
+    .tool-btn {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .toolbar.expanded .tool-btn {
+      justify-content: flex-start;
+      padding-left: 10px;
+    }
+
+    .tool-label {
+      margin-left: 12px;
+      font-size: 13px;
+      white-space: nowrap;
+      opacity: 0;
+      display: none;
+    }
+
+    .toolbar.expanded .tool-label {
+      display: block;
+      opacity: 1;
+    }
+
+    .tool-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .tool-btn.active { background: var(--accent-gradient); color: white; }
+    
+    .tool-btn .tooltip {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 8px;
+      padding: 6px 10px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 100;
+    }
+    
+    .tool-btn:hover .tooltip { opacity: 1; }
+    .toolbar.expanded .tool-btn:hover .tooltip { display: none; }
+    
+    .canvas-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .canvas-wrapper {
+      position: relative;
+      background: repeating-conic-gradient(#2a2a3e 0% 25%, #1e1e32 0% 50%) 50% / 16px 16px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+    }
+    
+    #main-canvas { display: block; }
+    
+    .side-panel {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .side-panel-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    
+    .panel-section {
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .panel-title {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+    
+    .slider-group { margin-bottom: 12px; }
+    .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+    
+    .slider-input {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--bg-secondary);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+    }
+    
+    .color-picker-btn {
+      width: 100%;
+      height: 36px;
+      border-radius: 6px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+    }
+    
+    .action-btn {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .action-btn:hover { background: var(--accent-primary); color: white; border-color: transparent; }
+    .action-btn.primary { background: var(--accent-gradient); color: white; border-color: transparent; }
+    .action-btn.small { padding: 5px 8px; font-size: 10px; }
+    
+    .size-input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 12px;
+    }
+    
+    .text-input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 12px;
+      resize: vertical;
+      min-height: 50px;
+    }
+    
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 40px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+    
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .layers-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
+    
+    .layer-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      border: 1px solid transparent;
+    }
+    
+    .layer-item.active { border-color: var(--accent-primary); }
+    .layer-item:hover { background: var(--bg-primary); }
+    
+    .brush-cursor {
+      position: fixed;
+      border: 2px solid var(--accent-primary);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    
+    .brush-cursor.visible { opacity: 1; }
+    
+    .fullscreen-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 50;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+    
+    .fullscreen-btn:hover { background: var(--bg-tertiary); }
+    
+    .page-nav {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-secondary);
+      padding: 8px 16px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 1px solid var(--border-color);
+    }
+    
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-btn:not(:disabled):hover { background: var(--accent-primary); color: white; }
+    
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <div class="editor-wrapper" id="editor-wrapper">
+    <!-- Header -->
+    <header class="editor-header header h-14 flex items-center px-4 border-b border-[var(--border-color)]">
+      <a href="../index.html" class="flex items-center gap-2">
+        <span class="text-xl">⚡</span>
+        <span class="text-lg font-bold gradient-text">WithoutAccount</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-2 text-xs ml-4">
+        <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+        <span class="text-[var(--text-muted)]">/</span>
+        <span class="text-[var(--accent-primary)]">PDF Editor</span>
+      </nav>
+      <div class="flex-1"></div>
+      <span class="feature-badge text-xs mr-3">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        100% Private
+      </span>
+      <button data-theme-toggle class="theme-toggle w-9 h-9" aria-label="Toggle theme">
+        <svg id="theme-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg id="theme-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+    </header>
+    
+    <!-- Drop Zone (shown when no pdf) -->
+    <div id="drop-zone" class="flex-1 flex items-center justify-center p-8">
+      <div class="drop-zone max-w-lg w-full">
+        <input type="file" id="file-input" accept="application/pdf" class="hidden">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background: var(--accent-gradient);">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="text-center">
+            <p class="text-lg font-medium mb-1">Drop a PDF here or click to browse</p>
+            <p class="text-sm text-[var(--text-secondary)]">Secure, client-side processing</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Editor (hidden until pdf loaded) -->
+    <div id="editor" class="editor-main hidden">
+      
+      <!-- Left Toolbar -->
+      <div class="toolbar" id="main-toolbar">
+        <button class="tool-btn" id="toolbar-toggle" title="Expand/Collapse">
+           <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="h-px bg-[var(--border-color)] my-1"></div>
+
+        <button class="tool-btn active" data-tool="select" title="Select">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+            <span class="tool-label">Select (V)</span>
+            <span class="tooltip">Select (V)</span>
+        </button>
+        <button class="tool-btn" data-tool="text" title="Text">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"></rect><path d="M12 7v10M8 7h8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span class="tool-label">Text (T)</span>
+            <span class="tooltip">Text (T)</span>
+        </button>
+        <button class="tool-btn" data-tool="brush" title="Draw">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            <span class="tool-label">Draw (B)</span>
+            <span class="tooltip">Draw (B)</span>
+        </button>
+        <button class="tool-btn" data-tool="image" title="Add Image">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="tool-label">Image (I)</span>
+            <span class="tooltip">Image (I)</span>
+        </button>
+        <button class="tool-btn" data-tool="shapes" title="Shapes">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/></svg>
+            <span class="tool-label">Shapes (S)</span>
+            <span class="tooltip">Shapes (S)</span>
+        </button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span class="tool-label">Eraser (E)</span>
+            <span class="tooltip">Eraser (E)</span>
+        </button>
+        
+        <div class="h-px bg-[var(--border-color)] my-1"></div>
+        
+        <button class="tool-btn" id="undo-btn" title="Undo">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+            <span class="tool-label">Undo</span>
+            <span class="tooltip">Undo (Ctrl+Z)</span>
+        </button>
+        <button class="tool-btn" id="redo-btn" title="Redo">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+            <span class="tool-label">Redo</span>
+            <span class="tooltip">Redo (Ctrl+Y)</span>
+        </button>
+      </div>
+      
+      <!-- Canvas Area -->
+      <div class="canvas-container" id="canvas-container">
+        <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        </button>
+        
+        <div class="canvas-wrapper" id="canvas-wrapper">
+          <canvas id="main-canvas"></canvas>
+        </div>
+        
+        <!-- Page Navigation -->
+        <div class="page-nav" id="page-nav">
+          <button class="page-btn" id="prev-page"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+          <span class="text-sm font-medium" id="page-indicator">Page 1 of 1</span>
+          <button class="page-btn" id="next-page"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      
+      <!-- Right Side Panel -->
+      <div class="side-panel">
+        <div class="side-panel-scroll">
+          
+          <!-- Tool Options Panel -->
+          <div class="panel-section">
+            <div class="panel-title">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>Tool Options</span>
+            </div>
+            <div id="tool-options-content">
+              <p class="text-xs text-[var(--text-muted)]">Select a tool to see options</p>
+            </div>
+          </div>
+          
+          <!-- Objects/Layers Panel -->
+          <div class="panel-section">
+            <div class="panel-title">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              <span>Annotations</span>
+            </div>
+            <div id="objects-list" class="layers-list"></div>
+            <div class="flex gap-2 mt-3">
+              <button class="action-btn small flex-1" id="delete-object-btn">Delete Selected</button>
+            </div>
+          </div>
+          
+          <!-- Export Panel -->
+          <div class="panel-section">
+            <div class="panel-title">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Export</span>
+            </div>
+            <p class="text-xs text-[var(--text-secondary)] mb-3">Download the modified PDF with your annotations.</p>
+            <button class="action-btn primary" id="export-btn" onclick="umami.track('PDF Editor: Download PDF Click')">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Download PDF
+            </button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Brush Cursor Preview -->
+  <div class="brush-cursor" id="brush-cursor"></div>
+  
+  <!-- Hidden file input for adding images -->
+  <input type="file" id="add-image-input" accept="image/*" class="hidden">
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  <script src="../js/pdf-editor.js"></script>
+</body>
+</html>

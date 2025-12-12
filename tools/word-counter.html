@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free Word Counter - Characters, Words, Reading Time | WithoutAccount</title>
+  <meta name="description" content="Free word counter tool. Count characters, words, sentences, paragraphs. Get reading time, speaking time, keyword density, and topic analysis. No account needed.">
+  <meta name="keywords" content="word counter, character counter, reading time calculator, keyword density, text analyzer, free, no account">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/word-counter.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Word Counter",
+        "item": "https://withoutaccount.com/tools/word-counter.html"
+      }]
+    }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Free Word Counter - Characters, Words, Reading Time | WithoutAccount">
+  <meta property="og:description" content="Count words, characters, sentences. Get reading time, keyword density, and topic analysis. 100% free and private.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/word-counter">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Word Counter",
+    "description": "Count words, characters, sentences, paragraphs. Get reading time, keyword density, and topic analysis.",
+    "url": "https://withoutaccount.com/tools/word-counter",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  
+  <style>
+    /* Tool-specific styles */
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+    
+    .text-input {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      resize: vertical;
+      min-height: 200px;
+      width: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .text-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    
+    .text-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .section-title svg {
+      color: var(--accent-primary);
+    }
+    
+    .density-bar {
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .density-fill {
+      height: 100%;
+      background: var(--accent-gradient);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    
+    .keyword-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    
+    .keyword-item:hover {
+      border-color: var(--accent-primary);
+    }
+    
+    .topic-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .topic-tag:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+    }
+    
+    .topic-tag .percentage {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+    
+    .time-stat {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .time-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      background: var(--accent-gradient);
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tab-btn:hover {
+      background: var(--bg-tertiary);
+    }
+    
+    .tab-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+      border-color: transparent;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Word Counter</span>
+        </nav>
+        
+        <!-- Theme Toggle -->
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: var(--accent-gradient);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Word Counter</h1>
+        <p class="text-[var(--text-secondary)] max-w-xl mx-auto">
+          Analyze your text with detailed statistics, reading time estimates, keyword density, and topic detection.
+        </p>
+      </div>
+      
+      <!-- Privacy Badge -->
+      <div class="flex justify-center mb-8">
+        <span class="feature-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Text analyzed locally in your browser
+        </span>
+      </div>
+      
+      <!-- Text Input -->
+      <div class="mb-8">
+        <textarea 
+          id="text-input" 
+          class="text-input" 
+          placeholder="Paste or type your text here to analyze..."
+          rows="8"
+        ></textarea>
+        <div class="flex justify-between items-center mt-3">
+          <button id="clear-btn" class="text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Clear
+          </button>
+          <button id="copy-btn" class="text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors flex items-center gap-1" onclick="umami.track('Word Counter: Copy Click')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+            </svg>
+            Copy Stats
+          </button>
+        </div>
+      </div>
+      
+      <!-- Basic Stats Grid -->
+      <div class="mb-8">
+        <h2 class="section-title">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Basic Statistics
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-characters">0</div>
+            <div class="stat-label">Characters</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-chars-no-spaces">0</div>
+            <div class="stat-label">Chars (no spaces)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-words">0</div>
+            <div class="stat-label">Words</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-sentences">0</div>
+            <div class="stat-label">Sentences</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-paragraphs">0</div>
+            <div class="stat-label">Paragraphs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-lines">0</div>
+            <div class="stat-label">Lines</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-unique-words">0</div>
+            <div class="stat-label">Unique Words</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-numbers">0</div>
+            <div class="stat-label">Numbers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-avg-word-length">0</div>
+            <div class="stat-label">Avg Word Length</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-avg-sentence-length">0</div>
+            <div class="stat-label">Avg Words/Sentence</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Time Estimates -->
+      <div class="mb-8">
+        <h2 class="section-title">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Time Estimates
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="time-stat">
+            <div class="time-icon">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-lg font-semibold" id="time-reading">0 sec</div>
+              <div class="text-sm text-[var(--text-secondary)]">Reading Time (200 WPM)</div>
+            </div>
+          </div>
+          <div class="time-stat">
+            <div class="time-icon">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-lg font-semibold" id="time-speaking">0 sec</div>
+              <div class="text-sm text-[var(--text-secondary)]">Speaking Time (150 WPM)</div>
+            </div>
+          </div>
+          <div class="time-stat">
+            <div class="time-icon">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-lg font-semibold" id="time-handwriting">0 sec</div>
+              <div class="text-sm text-[var(--text-secondary)]">Handwriting Time (13 WPM)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Analysis Tabs -->
+      <div class="glass-card p-6">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="keywords">Keyword Density</button>
+          <button class="tab-btn" data-tab="similar">Similar Keywords</button>
+          <button class="tab-btn" data-tab="topics">Topic Density</button>
+        </div>
+        
+        <!-- Keyword Density Tab -->
+        <div id="tab-keywords" class="tab-content active">
+          <div id="keywords-list">
+            <div class="empty-state">
+              <p>Enter text above to see keyword density analysis</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Similar Keywords Tab -->
+        <div id="tab-similar" class="tab-content">
+          <p class="text-sm text-[var(--text-secondary)] mb-4">Words grouped by similarity (spelling variations counted together)</p>
+          <div id="similar-list">
+            <div class="empty-state">
+              <p>Enter text above to see similar keyword groups</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Topic Density Tab -->
+        <div id="tab-topics" class="tab-content">
+          <p class="text-sm text-[var(--text-secondary)] mb-4">Topics detected based on keyword analysis</p>
+          <div id="topics-list">
+            <div class="empty-state">
+              <p>Enter text above to see topic analysis</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Word Counter JS -->
+  <script src="../js/word-counter.js"></script>
+</body>
+</html>

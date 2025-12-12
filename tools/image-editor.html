@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/image-editor.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Image Editor",
+        "item": "https://withoutaccount.com/tools/image-editor.html"
+      }]
+    }
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Image Editor - Resize, Crop, Draw, Filters | WithoutAccount</title>
+  <meta name="description" content="Advanced free online image editor. Layers, object editing, filters, and more. 100% private.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/theme.js"></script>
+  
+  <style>
+    html, body { overflow: hidden; height: 100%; touch-action: none; }
+    
+    .editor-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .editor-wrapper.fullscreen { position: fixed; inset: 0; z-index: 1000; background: var(--bg-primary); }
+    .editor-wrapper.fullscreen .editor-header { display: none; }
+    
+    .editor-main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 56px;
+      flex-shrink: 0;
+      transition: width 0.2s ease;
+      z-index: 20;
+    }
+    
+    .toolbar.expanded { width: 200px; }
+    
+    .tool-btn {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+    
+    .tool-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .tool-label { margin-left: 12px; font-size: 13px; white-space: nowrap; opacity: 0; transition: opacity 0.1s; display: none; }
+    .toolbar.expanded .tool-label { opacity: 1; display: block; }
+    
+    .tool-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .tool-btn.active { background: var(--accent-gradient); color: white; }
+    
+    .toolbar-toggle {
+      margin-top: auto;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      padding-top: 4px;
+    }
+    .toolbar-toggle:hover { color: var(--text-primary); }
+
+    /* Canvas Area */
+    .canvas-container {
+      flex: 1;
+      background: #1a1a2e;
+      overflow: hidden;
+      position: relative;
+      cursor: grab;
+      /* removed flex alignment to rely on absolute positioning + JS centering */
+    }
+    
+    .canvas-container.panning { cursor: grabbing; }
+    
+    .canvas-viewport {
+      transform-origin: 0 0;
+      pointer-events: none; /* Let events pass to canvas if strictly visual wrapper */
+    }
+    
+    /* We'll handle transforms on the canvas style itself or a wrapper div */
+    #canvas-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+      background: repeating-conic-gradient(#2a2a3e 0% 25%, #1e1e32 0% 50%) 50% / 16px 16px;
+    }
+    
+    #main-canvas { display: block; }
+    
+    /* Canvas creation modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: var(--bg-secondary); border-radius: 12px; padding: 24px;
+      max-width: 400px; width: 90%; border: 1px solid var(--border-color);
+    }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+    .modal-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); }
+    .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .color-option { width: 40px; height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+    .color-option:hover, .color-option.active { border-color: var(--accent-primary); transform: scale(1.1); }
+    .color-option.transparent { background: repeating-conic-gradient(#666 0% 25%, #999 0% 50%) 50% / 10px 10px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+
+    /* Right Panel */
+    .side-panel {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 20;
+    }
+    
+    .side-panel-scroll { flex: 1; overflow-y: auto; padding: 12px; }
+    
+    .panel-section {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .panel-title {
+      font-weight: 600;
+      font-size: 11px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Controls */
+    .slider-group { margin-bottom: 10px; }
+    .slider-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .slider-label { font-size: 11px; color: var(--text-secondary); }
+    .slider-val { font-size: 11px; font-family: monospace; }
+    
+    .slider-input {
+      width: 100%; height: 6px; border-radius: 3px;
+      background: var(--bg-primary);
+      -webkit-appearance: none; appearance: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--accent-primary); cursor: pointer;
+    }
+    
+    .color-picker-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .color-picker-btn { width: 40px; height: 24px; border-radius: 4px; border: 1px solid var(--border-color); padding: 0; cursor: pointer; }
+    
+    .action-btn {
+      padding: 6px 12px; border-radius: 6px; font-weight: 500; font-size: 12px;
+      border: 1px solid var(--border-color); background: var(--bg-primary);
+      color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .action-btn:hover { background: var(--bg-tertiary); border-color: var(--text-secondary); }
+    .action-btn.active, .action-btn.primary { background: var(--accent-gradient); color: white; border-color: transparent; }
+    .action-btn.small { padding: 4px 8px; font-size: 11px; }
+
+    /* Layers System */
+    .layer-group { border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; margin-bottom: 2px; }
+    .layer-header {
+      display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+      background: var(--bg-tertiary); cursor: pointer; font-size: 12px; font-weight: 500;
+    }
+    .layer-header.active { background: rgba(99, 102, 241, 0.1); border-left: 3px solid var(--accent-primary); }
+    .layer-items { padding-left: 0; }
+    
+    .object-item {
+      display: flex; align-items: center; gap: 6px; padding: 4px 8px 4px 24px;
+      background: var(--bg-secondary); cursor: pointer; font-size: 11px;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+    .object-item.selected { background: rgba(99, 102, 241, 0.05); color: var(--accent-primary); }
+    .object-item:hover { background: var(--bg-primary); }
+
+    /* Overlays */
+    .brush-cursor {
+      position: fixed; pointer-events: none; z-index: 1000;
+      border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      border-radius: 50%; opacity: 0; transition: opacity 0.1s;
+    }
+    .brush-cursor.visible { opacity: 1; }
+
+    #text-editor-overlay {
+      position: absolute; z-index: 50; background: transparent; 
+      border: 1px dashed var(--accent-primary); padding: 0; outline: none;
+      resize: none; overflow: hidden; color: transparent; caret-color: black;
+      display: none; white-space: pre; 
+    }
+
+    .fullscreen-btn {
+      position: absolute; top: 12px; right: 12px; z-index: 50;
+      background: rgba(0,0,0,0.5); color: white; border-radius: 6px; padding: 8px;
+      cursor: pointer; border: none; backdrop-filter: blur(4px);
+    }
+    
+    .zoom-controls {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      padding: 4px; border-radius: 20px; display: flex; gap: 4px; align-items: center;
+      color: white; font-size: 12px; z-index: 40;
+    }
+    .zoom-btn { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .zoom-btn:hover { background: rgba(255,255,255,0.2); }
+    
+    /* Tool cursors */
+    .canvas-container.tool-brush { cursor: crosshair; }
+    .canvas-container.tool-eraser { cursor: crosshair; }
+    .canvas-container.tool-fill { cursor: cell; }
+    .canvas-container.tool-text { cursor: text; }
+    .canvas-container.tool-shapes { cursor: crosshair; }
+    .canvas-container.tool-crop { cursor: crosshair; }
+    .canvas-container.tool-select { cursor: default; }
+    .canvas-container.tool-transform { cursor: move; }
+    .canvas-container.tool-image { cursor: copy; }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <div class="editor-wrapper" id="editor-wrapper">
+    <!-- Header -->
+    <header class="editor-header header h-14 flex items-center px-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+      <a href="../index.html" class="flex items-center gap-2">
+        <span class="text-xl">⚡</span>
+        <span class="text-lg font-bold gradient-text">WithoutAccount</span>
+      </a>
+      <div class="h-6 w-px bg-[var(--border-color)] mx-4"></div>
+      <div class="font-medium text-sm">Image Editor</div>
+      <div class="flex-1"></div>
+      <button class="action-btn small" id="export-header-btn">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Export
+      </button>
+    </header>
+    
+    <!-- Editor Main -->
+    <div class="editor-main">
+      
+      <!-- Toolbar -->
+      <!-- Toolbar -->
+      <div class="toolbar expanded" id="toolbar">
+        <button class="tool-btn active" data-tool="select" title="Select (V)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+          <span class="tool-label">Select (V)</span>
+        </button>
+        <button class="tool-btn" data-tool="transform" title="Transform (T)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          <span class="tool-label">Transform (T)</span>
+        </button>
+        <button class="tool-btn" data-tool="crop" title="Crop (C)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10v10H7z"/></svg>
+          <span class="tool-label">Crop (C)</span>
+        </button>
+        <div class="h-px bg-[var(--border-color)] my-1 w-full flex-shrink-0"></div>
+        <button class="tool-btn" data-tool="brush" title="Brush (B)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <span class="tool-label">Brush (B)</span>
+        </button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span class="tool-label">Eraser (E)</span>
+        </button>
+        <button class="tool-btn" data-tool="fill" title="Fill (G)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <span class="tool-label">Fill Bucket (G)</span>
+        </button>
+        <div class="h-px bg-[var(--border-color)] my-1 w-full flex-shrink-0"></div>
+        <button class="tool-btn" data-tool="text" title="Text (X)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h18M3 19h18M5 12h14M12 5v14"/></svg>
+          <span class="tool-label">Text (X)</span>
+        </button>
+        <button class="tool-btn" data-tool="image" title="Add Image (I)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="tool-label">Add Image (I)</span>
+        </button>
+        <button class="tool-btn" data-tool="shapes" title="Shapes (S)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/></svg>
+          <span class="tool-label">Shapes (S)</span>
+        </button>
+        <div class="h-px bg-[var(--border-color)] my-1 w-full flex-shrink-0"></div>
+        <button class="tool-btn" data-tool="filters" title="Filters (F)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          <span class="tool-label">Filters (F)</span>
+        </button>
+        <div class="flex-1"></div>
+        <div class="toolbar-toggle" id="toolbar-toggle" title="Expand/Collapse">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      
+      <!-- Canvas Area -->
+      <div class="canvas-container" id="canvas-container">
+        
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="absolute inset-0 z-40 flex items-center justify-center p-8 bg-[var(--bg-primary)]">
+          <div class="drop-zone max-w-lg w-full">
+            <input type="file" id="file-input" accept="image/*" class="hidden">
+            <div class="flex flex-col items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-[var(--accent-primary)] flex items-center justify-center text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <p class="text-lg font-medium">Click to create new or drop image</p>
+              <div class="flex gap-2">
+                <button class="action-btn" id="create-new-btn">Create New Canvas</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Canvas Creation Modal -->
+        <div class="modal-overlay" id="create-modal">
+          <div class="modal-content">
+            <div class="modal-title">Create New Canvas</div>
+            <div class="modal-field">
+              <label class="modal-label">Dimensions</label>
+              <div class="flex gap-2">
+                <input type="number" id="canvas-width" class="modal-input" value="800" placeholder="Width">
+                <span class="flex items-center text-[var(--text-muted)]">×</span>
+                <input type="number" id="canvas-height" class="modal-input" value="600" placeholder="Height">
+              </div>
+            </div>
+            <div class="modal-field">
+              <label class="modal-label">Background Color</label>
+              <div class="color-options">
+                <div class="color-option active" data-color="#ffffff" style="background:#ffffff" title="White"></div>
+                <div class="color-option" data-color="#000000" style="background:#000000" title="Black"></div>
+                <div class="color-option transparent" data-color="transparent" title="Transparent"></div>
+                <div class="color-option" data-color="#f3f4f6" style="background:#f3f4f6" title="Light Gray"></div>
+                <div class="color-option" data-color="#1f2937" style="background:#1f2937" title="Dark Gray"></div>
+                <input type="color" id="custom-bg-color" class="color-option" value="#6366f1" title="Custom Color">
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="action-btn" id="cancel-create-btn">Cancel</button>
+              <button class="action-btn primary" id="confirm-create-btn">Create</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Wrapper for Zoom/Pan -->
+        <div id="canvas-wrapper">
+          <canvas id="main-canvas"></canvas>
+          <textarea id="text-editor-overlay"></textarea>
+        </div>
+        
+        <!-- Controls -->
+        <button class="fullscreen-btn" id="fullscreen-btn"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg></button>
+        
+        <div class="zoom-controls">
+          <div class="zoom-btn" id="zoom-out">-</div>
+          <span id="zoom-value" class="w-12 text-center">100%</span>
+          <div class="zoom-btn" id="zoom-in">+</div>
+          <div class="w-px h-3 bg-white/30 mx-1"></div>
+          <div class="zoom-btn" id="zoom-fit" title="Fit to Screen">□</div>
+        </div>
+      </div>
+      
+      <!-- Right Panel -->
+      <div class="side-panel">
+        <div class="side-panel-scroll">
+          
+          <!-- Tool Options -->
+          <div class="panel-section">
+            <div class="panel-title"><span>Tool Options</span></div>
+            <div id="tool-options-content"></div>
+          </div>
+          
+          <!-- Layers & Objects -->
+          <div class="panel-section">
+            <div class="panel-title">
+              <span>Layers</span>
+              <button class="text-[var(--accent-primary)] hover:text-[var(--text-primary)]" id="add-layer-btn" title="New Layer">+</button>
+            </div>
+            <div class="flex flex-col gap-2 mb-2" id="layers-list">
+              <!-- Layers rendered here -->
+            </div>
+            <p class="text-[10px] text-[var(--text-muted)] text-center">Drag to reorder not supported yet</p>
+          </div>
+          
+          <!-- History -->
+          <div class="panel-section">
+             <div class="panel-title">
+               <span>History</span>
+               <div class="flex gap-2">
+                 <button class="text-[var(--text-secondary)] hover:text-white" id="undo-btn">↶</button>
+                 <button class="text-[var(--text-secondary)] hover:text-white" id="redo-btn">↷</button>
+               </div>
+             </div>
+             <div id="history-list" class="flex flex-col gap-1 max-h-[100px] overflow-y-auto"></div>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <div class="brush-cursor" id="brush-cursor"></div>
+  <input type="file" id="add-image-input" accept="image/*" class="hidden">
+
+  <script src="../js/main.js"></script>
+  <script src="../js/image-editor.js"></script>
+</body>
+</html>

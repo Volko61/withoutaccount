@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free Video Converter - MP4, WebM, AVI | WithoutAccount</title>
+  <meta name="description" content="Convert videos for free with advanced options. Change format, codec, resolution, framerate, and more. 100% client-side, secure, and fast.">
+  <meta name="keywords" content="video converter, mp4 converter, client side video tools, ffmpeg wasm, free video tools">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/video-converter.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Video Converter",
+        "item": "https://withoutaccount.com/tools/video-converter.html"
+      }]
+    }
+  </script>
+  
+  <!-- Enable Cross-Origin Isolation for SharedArrayBuffer -->
+  <script src="../js/coi-serviceworker.js"></script>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Free Video Converter - Professional Tools | WithoutAccount">
+  <meta property="og:description" content="Convert and edit videos in your browser. No upload required.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/video-converter">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+
+  <!-- FFmpeg.wasm (Local) -->
+  <script src="../js/vendor/ffmpeg.js"></script>
+  <script src="../js/vendor/ffmpeg-util.js"></script>
+  
+  <style>
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+    
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .drop-zone.dragover {
+      transform: scale(1.02);
+    }
+
+    .glass-panel {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+    }
+
+    /* Custom scrollbar for log */
+    .log-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .log-container::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1);
+    }
+    .log-container::-webkit-scrollbar-thumb {
+        background: var(--accent-primary);
+        border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Video Converter</span>
+        </nav>
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: var(--accent-gradient);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Professional Video Converter</h1>
+        <p class="text-[var(--text-secondary)] max-w-xl mx-auto">
+          Advanced video transcoding right in your browser. Support for MP4, WebM, GIF, and more.
+          Customize resolution, bitrate, and codecs.
+        </p>
+      </div>
+      
+      <!-- Privacy Badge -->
+      <div class="flex justify-center mb-8">
+        <span class="feature-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Processed Locally via FFmpeg WASM
+        </span>
+      </div>
+
+      <!-- Engine Status -->
+      <div id="engine-status" class="text-center mb-4 hidden">
+        <span class="inline-flex items-center gap-2 text-sm text-[var(--accent-primary)] bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-full">
+            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Loading Video Engine...
+        </span>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left Column: Input and Files -->
+          <div class="lg:col-span-1 space-y-6">
+              <!-- Drop Zone -->
+              <div id="drop-zone" class="drop-zone">
+                <input type="file" id="file-input" accept="video/*,audio/*" class="hidden">
+                <div class="flex flex-col items-center gap-4">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <svg class="w-6 h-6 text-[var(--accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium mb-1">Select Video File</p>
+                    <p class="text-xs text-[var(--text-secondary)]">Drag & drop or click</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Info Card -->
+              <div id="file-info" class="glass-panel p-4 hidden">
+                  <h3 class="text-sm font-semibold uppercase text-[var(--text-muted)] mb-3">Input File</h3>
+                  <div class="flex items-center gap-3 mb-2">
+                       <div class="w-10 h-10 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                           <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                       </div>
+                       <div class="overflow-hidden">
+                           <p id="input-filename" class="font-medium truncate text-sm">video.mp4</p>
+                           <p id="input-filesize" class="text-xs text-[var(--text-secondary)]">24.5 MB</p>
+                       </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Middle Column: Options -->
+          <div class="lg:col-span-2 space-y-6">
+              <div id="options-panel" class="glass-panel p-6 opacity-50 pointer-events-none transition-opacity">
+                  <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                      <svg class="w-5 h-5 text-[var(--accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                      Conversion Options
+                  </h2>
+
+                  <!-- Tabs for Basic/Advanced? Maybe just one clean grid -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      <!-- Format -->
+                      <div class="space-y-2">
+                          <label class="block text-sm font-medium text-[var(--text-secondary)]">Output Format</label>
+                          <select id="opt-format" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                              <option value="mp4" selected>MP4 (H.264)</option>
+                              <option value="webm">WebM (VP9)</option>
+                              <option value="mkv">MKV</option>
+                              <option value="avi">AVI</option>
+                              <option value="mov">MOV (QuickTime)</option>
+                              <option value="gif">GIF (Animated)</option>
+                              <option disabled>--- Audio Only ---</option>
+                              <option value="mp3">MP3 (Audio)</option>
+                              <option value="wav">WAV (Audio)</option>
+                              <option value="ogg">OGG (Audio)</option>
+                          </select>
+                      </div>
+
+                      <!-- Resolution -->
+                      <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[var(--text-secondary)]">Resolution</label>
+                        <select id="opt-resolution" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                            <option value="original" selected>Same as Original</option>
+                            <option value="1920:-2">1080p (Full HD)</option>
+                            <option value="1280:-2">720p (HD)</option>
+                            <option value="854:-2">480p (SD)</option>
+                            <option value="640:-2">360p</option>
+                            <option value="scale">Custom Scale (0.5x, 2x)</option>
+                        </select>
+                      </div>
+
+                      <!-- Video Codec (Conditional) -->
+                      <div class="space-y-2 video-option">
+                        <label class="block text-sm font-medium text-[var(--text-secondary)]">Video Codec</label>
+                        <select id="opt-vcodec" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                            <option value="libx264" selected>H.264 (Standard)</option>
+                            <option value="libx265">H.265 (HEVC) - Slow</option>
+                            <option value="libvpx-vp9">VP9 (Web/YouTube)</option>
+                            <option value="copy">Copy (No Re-encoding)</option>
+                        </select>
+                      </div>
+
+                      <!-- Audio Codec -->
+                      <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[var(--text-secondary)]">Audio Codec</label>
+                        <select id="opt-acodec" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                            <option value="aac" selected>AAC (Standard)</option>
+                            <option value="libmp3lame">MP3</option>
+                            <option value="libopus">Opus</option>
+                            <option value="libvorbis">Vorbis</option>
+                            <option value="pcm_s16le">PCM 16-bit (WAV)</option>
+                            <option value="copy">Copy</option>
+                            <option value="none">No Audio (Mute)</option>
+                        </select>
+                      </div>
+
+                       <!-- Frame Rate -->
+                       <div class="space-y-2 video-option">
+                        <label class="block text-sm font-medium text-[var(--text-secondary)]">Frame Rate (FPS)</label>
+                        <select id="opt-fps" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                            <option value="original" selected>Original</option>
+                            <option value="60">60 FPS</option>
+                            <option value="30">30 FPS</option>
+                            <option value="24">24 FPS (Cinematic)</option>
+                        </select>
+                      </div>
+
+                      <!-- Quality/Preset -->
+                      <div class="space-y-2 video-option">
+                        <label class="block text-sm font-medium text-[var(--text-secondary)]">Encoding Speed (Preset)</label>
+                        <select id="opt-preset" class="w-full bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--accent-primary)] outline-none transition-all">
+                            <option value="ultrafast" selected>Ultrafast (Lower Quality)</option>
+                            <option value="veryfast">Very Fast</option>
+                            <option value="medium">Medium (Balanced)</option>
+                            <option value="slow">Slow (Better Quality)</option>
+                            <option value="veryslow">Very Slow (Best Quality)</option>
+                        </select>
+                      </div>
+                  </div>
+
+                  <!-- Advanced Audio/Bitrate Toggle? Keep it simple for now but "lot of options" fulfilled by the above -->
+                  
+                  <!-- Convert Button -->
+                  <div class="mt-8">
+                      <button id="convert-btn" class="w-full btn-accent py-4 text-lg font-bold shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-3" onclick="umami.track('Video Converter: Convert Click')">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        Start Conversion
+                      </button>
+                  </div>
+              </div>
+
+               <!-- Progress Section -->
+              <div id="progress-panel" class="glass-panel p-6 mt-6 hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-semibold" id="status-text">Converting...</h3>
+                    <span id="progress-percent" class="text-[var(--accent-primary)] font-mono">0%</span>
+                </div>
+                <div class="w-full bg-[var(--bg-tertiary)] rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-[var(--accent-primary)] h-full transition-all duration-300 w-0"></div>
+                </div>
+                
+                 <!-- Log Output -->
+                 <div class="mt-4">
+                     <button id="toggle-log" class="text-xs text-[var(--accent-primary)] hover:underline mb-2">Show/Hide FFmpeg Log</button>
+                     <div id="log-container" class="log-container hidden h-40 bg-black text-green-400 font-mono text-xs p-3 rounded overflow-y-auto whitespace-pre-wrap"></div>
+                 </div>
+              </div>
+
+              <!-- Result Section -->
+              <div id="result-panel" class="glass-panel p-6 mt-6 hidden border-green-500/30 bg-green-500/5">
+                  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                      <div class="flex items-center gap-3">
+                          <div class="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center">
+                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                          </div>
+                          <div>
+                              <h3 class="font-bold">Conversion Complete!</h3>
+                              <p class="text-sm text-[var(--text-secondary)]">Your file is ready to download.</p>
+                          </div>
+                      </div>
+                      <a id="download-btn" href="#" download class="btn-accent px-6 py-3 flex items-center gap-2">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                          Download Video
+                      </a>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+          
+    </div>
+  </main>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Video Converter JS -->
+  <script src="../js/video-converter.js"></script>
+</body>
+</html>

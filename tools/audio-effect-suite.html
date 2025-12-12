@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Audio Effect Suite - Voice Changer & Audio Enhancer | WithoutAccount</title>
+  <meta name="description" content="Add effects to your audio and video files. Voice changer presets (Robot, Radio, Podcaster) and improvement tools. Free, client-side, and private.">
+  <meta name="keywords" content="audio effects, voice changer, audio enhancer, robot voice, podcaster filter, free, no account">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/audio-effect-suite.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Audio Effect Suite",
+        "item": "https://withoutaccount.com/tools/audio-effect-suite.html"
+      }]
+    }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Audio Effect Suite - Free Voice Changer">
+  <meta property="og:description" content="Apply professional effects and voice changes to your audio files directly in your browser.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/audio-effect-suite">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Audio Effect Suite",
+    "description": "Browser-based audio effect processor and voice changer",
+    "url": "https://withoutaccount.com/tools/audio-effect-suite",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  
+  <style>
+    /* Tool-specific styles */
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+    
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .drop-zone.dragover {
+      transform: scale(1.02);
+    }
+    
+    .preset-btn {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .preset-btn:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+    }
+    
+    .preset-btn.active {
+      background: var(--accent-gradient);
+      border-color: transparent;
+      color: white;
+    }
+
+    .preset-btn.active svg {
+      color: white;
+    }
+    
+    .visualizer-container {
+      width: 100%;
+      height: 120px;
+      background: var(--bg-tertiary);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .loader {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Audio Effect Suite</span>
+        </nav>
+        
+        <!-- Theme Toggle -->
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: var(--accent-gradient);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Audio Effect Suite</h1>
+        <p class="text-[var(--text-secondary)] max-w-xl mx-auto">
+          Enhance audio, change voices, and apply effects. Works with audio and video files directly in your browser.
+        </p>
+      </div>
+      
+      <!-- Privacy Badge -->
+      <div class="flex justify-center mb-8">
+        <span class="feature-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Processed locally in your browser
+        </span>
+      </div>
+      
+      <!-- Drop Zone -->
+      <div id="drop-zone" class="drop-zone mb-8">
+        <input type="file" id="file-input" accept="audio/*,video/*" class="hidden">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background: var(--accent-gradient);">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-lg font-medium mb-1">Drop audio or video here</p>
+            <p class="text-sm text-[var(--text-secondary)]">Supports MP3, WAV, MP4, WebM, etc. (Max 100MB)</p>
+          </div>
+          
+          <div class="flex items-center gap-3 w-full max-w-xs">
+             <div class="h-px bg-[var(--border-color)] flex-1"></div>
+             <span class="text-xs text-[var(--text-muted)] uppercase font-semibold">OR</span>
+             <div class="h-px bg-[var(--border-color)] flex-1"></div>
+          </div>
+
+          <button id="record-btn" class="btn-secondary px-6 py-3 rounded-xl flex items-center gap-3 hover:bg-[var(--bg-tertiary)] transition-all" onclick="umami.track('Audio Suite: Record Start')">
+            <span id="record-dot" class="w-3 h-3 rounded-full bg-red-500"></span>
+            <span id="record-text">Record Microphone</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Editor Panel (Hidden initially) -->
+      <div id="editor-panel" class="hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Controls Column -->
+          <div class="lg:col-span-2 space-y-6">
+            
+            <!-- File Info -->
+            <div class="glass-card p-4 flex items-center justify-between">
+               <div class="flex items-center gap-3">
+                 <div class="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--accent-primary)]">
+                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                   </svg>
+                 </div>
+                 <div class="overflow-hidden">
+                   <h3 id="filename" class="font-medium truncate">filename.mp3</h3>
+                   <p id="file-meta" class="text-xs text-[var(--text-muted)]">00:00 • 0 MB</p>
+                 </div>
+               </div>
+               <button id="change-file-btn" class="text-sm text-[var(--accent-primary)] hover:underline">Change</button>
+            </div>
+
+            <!-- Visualization -->
+            <div class="glass-card p-6">
+              <h3 class="text-lg font-semibold mb-4">Preview</h3>
+              <div class="visualizer-container">
+                <canvas id="visualizer"></canvas>
+              </div>
+              
+              <!-- Timeline/Controls -->
+              <div class="flex items-center gap-4">
+                <button id="play-btn" class="w-12 h-12 rounded-full bg-[var(--accent-primary)] flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+                  <svg id="play-icon" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg id="pause-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="flex-1">
+                  <input type="range" id="seek-slider" min="0" max="100" value="0" class="w-full accent-[var(--accent-primary)] h-1 bg-[var(--bg-tertiary)] rounded-lg appearance-none cursor-pointer">
+                  <div class="flex justify-between text-xs text-[var(--text-muted)] mt-1">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button id="process-btn" class="btn-accent flex-1 py-3 text-lg flex items-center justify-center gap-2" onclick="umami.track('Audio Suite: Process Audio')">
+                <span>Process & Download Audio</span>
+              </button>
+              <!-- Hidden initially, visual cue for videos -->
+              <button id="process-video-btn" class="btn-secondary flex-1 py-3 text-lg flex items-center justify-center gap-2 hidden" onclick="umami.track('Audio Suite: Process Video')">
+                 <span>Download Video w/ Audio</span>
+              </button>
+            </div>
+            <p id="status-msg" class="text-center text-sm text-[var(--text-muted)] h-5"></p>
+
+          </div>
+          
+          <!-- Presets Column -->
+          <div class="lg:col-span-1">
+            <div class="glass-card p-6 h-full">
+              <h2 class="text-lg font-semibold mb-4">Effect Presets</h2>
+              <div class="grid grid-cols-2 gap-3" id="presets-grid">
+                
+                <button class="preset-btn active" data-preset="none">
+                  <svg class="w-6 h-6 mb-1 text-[var(--text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Original
+                </button>
+
+                <button class="preset-btn" data-preset="podcaster">
+                  <svg class="w-6 h-6 mb-1 text-[var(--text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                  </svg>
+                  Podcaster
+                </button>
+
+                <button class="preset-btn" data-preset="radio">
+                  <svg class="w-6 h-6 mb-1 text-[var(--text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  Old Radio
+                </button>
+
+                <button class="preset-btn" data-preset="robot">
+                  <svg class="w-6 h-6 mb-1 text-[var(--text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  Robotic
+                </button>
+
+                <!-- Pitch Shifters -->
+                <button class="preset-btn" data-preset="womans">
+                   <span class="text-xl">👩</span>
+                   Female
+                </button>
+
+                <button class="preset-btn" data-preset="mans">
+                   <span class="text-xl">👨</span>
+                   Male
+                </button>
+
+                <button class="preset-btn" data-preset="child">
+                   <span class="text-xl">👶</span>
+                   Child
+                </button>
+                
+                <button class="preset-btn" data-preset="elderly">
+                   <span class="text-xl">👴</span>
+                   Elderly
+                </button>
+                
+                 <button class="preset-btn" data-preset="telephone">
+                   <span class="text-xl">☎️</span>
+                   Telephone
+                </button>
+                
+                <button class="preset-btn" data-preset="cave">
+                   <span class="text-xl">🕳️</span>
+                   Cave/Echo
+                </button>
+
+              </div>
+              
+            </div>
+          </div>
+          
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Audio Suite JS -->
+  <script src="../js/audio-effect-suite.js"></script>
+</body>
+</html>

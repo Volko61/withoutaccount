@@ -1,0 +1,7 @@
+# WithoutAccount Robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://withoutaccount.com/sitemap.xml

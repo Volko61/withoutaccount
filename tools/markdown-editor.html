@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Markdown Editor - Real-time Preview | WithoutAccount</title>
+  <meta name="description" content="Free online Markdown editor with real-time preview. Write and edit markdown locally in your browser. No ads, no account required.">
+  <meta name="keywords" content="markdown editor, online markdown, markdown preview, free markdown tool, text editor">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/markdown-editor.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Markdown Editor",
+        "item": "https://withoutaccount.com/tools/markdown-editor.html"
+      }]
+    }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Markdown Editor | WithoutAccount">
+  <meta property="og:description" content="Free online Markdown editor with real-time preview. Write and edit markdown locally in your browser.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/markdown-editor">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <style>
+    /* Editor specific styles */
+    .editor-container {
+      height: calc(100vh - 300px);
+      min-height: 500px;
+    }
+
+    textarea {
+      font-family: 'JetBrains Mono', monospace;
+      resize: none;
+    }
+
+    /* Markdown Preview Styles */
+    .markdown-preview {
+      overflow-y: auto;
+      word-wrap: break-word;
+    }
+
+    .markdown-preview h1 { font-size: 2em; font-weight: 700; margin-bottom: 0.5em; margin-top: 1em; line-height: 1.2; }
+    .markdown-preview h2 { font-size: 1.5em; font-weight: 600; margin-bottom: 0.5em; margin-top: 1em; line-height: 1.25; }
+    .markdown-preview h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.5em; margin-top: 1em; line-height: 1.3; }
+    .markdown-preview p { margin-bottom: 1em; line-height: 1.6; }
+    .markdown-preview ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+    .markdown-preview ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
+    .markdown-preview a { color: var(--accent-primary); text-decoration: underline; }
+    .markdown-preview blockquote { border-left: 4px solid var(--border-color); padding-left: 1em; font-style: italic; color: var(--text-secondary); margin-bottom: 1em; }
+    .markdown-preview code { background: var(--bg-tertiary); padding: 0.2em 0.4em; border-radius: 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    .markdown-preview pre { background: #1e1e1e; padding: 1em; border-radius: 8px; overflow-x: auto; margin-bottom: 1em; color: #f8f8f2; }
+    .markdown-preview pre code { background: transparent; padding: 0; color: inherit; }
+    .markdown-preview img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
+    .markdown-preview hr { border: 0; border-top: 1px solid var(--border-color); margin: 2em 0; }
+    .markdown-preview table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
+    .markdown-preview th, .markdown-preview td { border: 1px solid var(--border-color); padding: 0.5em; text-align: left; }
+    .markdown-preview th { background: var(--bg-tertiary); font-weight: 600; }
+
+    /* Custom Scrollbar for editor/preview */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Markdown Editor</span>
+        </nav>
+        
+        <!-- Theme Toggle -->
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16 h-screen flex flex-col">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-8 flex-shrink-0">
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Markdown Editor</h1>
+        <p class="text-[var(--text-secondary)]">
+          Write markdown and see real-time preview. Client-side, secure, and fast.
+        </p>
+      </div>
+
+      <!-- Editor Card -->
+      <div class="glass-card flex-1 flex flex-col overflow-hidden mb-8 border border-[var(--border-color)] rounded-xl shadow-lg">
+        
+        <!-- Toolbar -->
+        <div class="p-2 border-b border-[var(--border-color)] bg-[var(--bg-tertiary)] flex flex-wrap gap-1 items-center">
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Bold" data-action="bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h10a4 4 0 110 8H6v-8z"/></svg>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Italic" data-action="italic">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </button>
+          <div class="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Heading 1" data-action="h1">
+            <span class="font-bold text-sm">H1</span>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Heading 2" data-action="h2">
+            <span class="font-bold text-sm">H2</span>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Heading 3" data-action="h3">
+            <span class="font-bold text-sm">H3</span>
+          </button>
+          <div class="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Unordered List" data-action="ul">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Ordered List" data-action="ol">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Quote" data-action="quote">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Code Block" data-action="code">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </button>
+          <div class="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Link" data-action="link">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          </button>
+          <button class="toolbar-btn p-2 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors" title="Image" data-action="image">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </button>
+          <div class="flex-1"></div>
+          <button id="copy-html-btn" class="text-xs px-3 py-1.5 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all" onclick="umami.track('Markdown Editor: Copy HTML')">
+            Copy HTML
+          </button>
+          <button id="download-btn" class="ml-2 text-xs px-3 py-1.5 rounded-md bg-[var(--accent-primary)] text-white hover:opacity-90 transition-opacity" onclick="umami.track('Markdown Editor: Download')">
+            Download .md
+          </button>
+        </div>
+
+        <!-- Split Pane -->
+        <div class="flex-1 flex flex-col md:flex-row min-h-0 bg-[var(--bg-secondary)]">
+          
+          <!-- Editor Input -->
+          <div class="flex-1 flex flex-col min-h-[50%] md:min-h-0 border-b md:border-b-0 md:border-r border-[var(--border-color)]">
+             <div class="text-xs font-semibold text-[var(--text-muted)] bg-[var(--bg-tertiary)] px-4 py-1 border-b border-[var(--border-color)]">MARKDOWN</div>
+             <textarea 
+               id="markdown-input" 
+               class="flex-1 w-full p-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:outline-none custom-scrollbar text-sm leading-relaxed" 
+               placeholder="# Start writing..."
+               spellcheck="false"
+             ></textarea>
+          </div>
+          
+          <!-- Preview Output -->
+          <div class="flex-1 flex flex-col min-h-[50%] md:min-h-0 bg-[var(--bg-primary)]">
+             <div class="text-xs font-semibold text-[var(--text-muted)] bg-[var(--bg-tertiary)] px-4 py-1 border-b border-[var(--border-color)]">PREVIEW</div>
+             <div id="markdown-preview" class="flex-1 w-full p-6 md:p-8 markdown-preview custom-scrollbar text-[var(--text-primary)]"></div>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+  </main>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Markdown Editor Logic -->
+  <script src="../js/markdown-editor.js"></script>
+</body>
+</html>

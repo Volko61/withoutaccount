@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+
+  <!-- SEO Meta Tags -->
+  <title>WithoutAccount - Free Online Tools, No Ads, No Sign-up</title>
+  <meta name="description" content="Free online tools with no ads, no account required. Image converter, PDF tools, and more. Fast, private, and easy to use.">
+  <meta name="keywords" content="free online tools, image converter, no ads, no account, privacy, fast tools">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="WithoutAccount - Free Online Tools, No Ads">
+  <meta property="og:description" content="Free online tools with no ads, no account required. Fast, private, and easy to use.">
+  <meta property="og:url" content="https://withoutaccount.com">
+  <meta property="og:site_name" content="WithoutAccount">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WithoutAccount - Free Online Tools, No Ads">
+  <meta name="twitter:description" content="Free online tools with no ads, no account required. Fast, private, and easy to use.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Theme Script (load early to prevent flash) -->
+  <script src="js/theme.js"></script>
+  
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "WithoutAccount",
+    "description": "Free online tools with no ads, no account required",
+    "url": "https://withoutaccount.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://withoutaccount.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "Is WithoutAccount completely free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all tools on WithoutAccount are 100% free to use. There are no hidden fees, premium subscriptions, or paywalls."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Is my data private and secure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. All processing happens locally in your browser using JavaScript. Your files and data are never uploaded to our servers, ensuring complete privacy."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Do I need to create an account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, you do not need to create an account or sign up to use any of our tools. We believe in providing instant access without barriers."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Does it work on mobile devices?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, our website is fully responsive and works on desktops, tablets, and mobile phones, so you can use our tools anywhere."
+      }
+    }]
+  }
+  </script>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#tools" class="nav-link">Tools</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#about" class="nav-link">About</a>
+        </nav>
+        
+        <!-- Right Section -->
+        <div class="flex items-center gap-3">
+          <!-- Theme Toggle -->
+          <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+            <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </button>
+          
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-button" class="md:hidden theme-toggle" aria-label="Open menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu md:hidden">
+    <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]">
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-2xl">⚡</span>
+        <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+      </a>
+      <button id="mobile-menu-close" class="theme-toggle" aria-label="Close menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="p-4 flex flex-col gap-2">
+      <a href="#tools" class="nav-link text-lg py-3">Tools</a>
+      <a href="#features" class="nav-link text-lg py-3">Features</a>
+      <a href="#about" class="nav-link text-lg py-3">About</a>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-bg pt-24 pb-16 md:pt-32 md:pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-4xl mx-auto">
+        
+        <!-- Feature Badges -->
+        <div class="flex flex-wrap justify-center gap-3 mb-8 fade-in">
+          <span class="feature-badge">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+            No Ads
+          </span>
+          <span class="feature-badge">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Lightning Fast
+          </span>
+          <span class="feature-badge">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            100% Private
+          </span>
+        </div>
+        
+        <!-- Main Headline -->
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 fade-in fade-in-delay-1">
+          Free Tools,
+          <span class="gradient-text">Without the Hassle</span>
+        </h1>
+        
+        <!-- Subheadline -->
+        <p class="text-lg md:text-xl text-[var(--text-secondary)] mb-10 max-w-2xl mx-auto fade-in fade-in-delay-2">
+          Powerful online tools that respect your privacy. No account needed, no ads, 
+          no tracking. Everything runs in your browser.
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in fade-in-delay-3">
+          <a href="#tools" class="btn-accent text-lg px-8 py-4">
+            Explore Tools
+          </a>
+          <a href="#features" class="btn-secondary text-lg px-8 py-4">
+            Learn More
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section id="tools" class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Tools</h2>
+        <p class="text-[var(--text-secondary)] max-w-2xl mx-auto">
+          Powerful utilities that work entirely in your browser. Your files never leave your device.
+        </p>
+      </div>
+      
+      <!-- Tools Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Image Converter -->
+        <a href="tools/image-converter.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Image Converter
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Convert images between PNG, JPG, WebP, and more. Adjust quality and resize.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- YouTube Thumbnail Previewer -->
+        <a href="tools/youtube-thumbnail-previewer.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            YouTube Thumbnail Previewer
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Preview how your thumbnails will look across different YouTube layouts and devices.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Markdown Editor -->
+        <a href="tools/markdown-editor.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Markdown Editor
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Write and preview Markdown in real-time. Export to HTML or .md files.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Video Converter -->
+        <a href="tools/video-converter.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Video Converter
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Convert videos to MP4, WebM, GIF, and extract audio.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Video Editor -->
+        <a href="tools/video-editor.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Video Editor
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Timeline editor. Add text, images, split clips, and export.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Text Tools / Word Counter -->
+        <a href="tools/word-counter.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Word Counter
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Count words, characters, sentences. Get reading time, keyword density, and topic analysis.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Image Editor -->
+        <a href="tools/image-editor.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Image Editor
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Resize, crop, rotate, add text, draw, apply filters & adjustments. Full-featured editor.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Audio Effect Suite -->
+        <a href="tools/audio-effect-suite.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Audio Effect Suite
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Voice changer & audio enhancer. Robot, Radio, Podcaster presets. Works with Video too.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Color Converter -->
+        <a href="tools/color-converter.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            Color Converter
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Convert between 60+ color formats. HEX, RGB, HSL, CMYK, LAB, and more.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- QR Code Generator -->
+        <a href="tools/qr-code.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h2M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            QR Code Generator
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Create and customize QR codes for links, text, and more.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- PDF Editor -->
+        <a href="tools/pdf-editor.html" class="tool-card group">
+          <div class="tool-icon mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 group-hover:text-[var(--accent-primary)] transition-colors">
+            PDF Editor
+          </h3>
+          <p class="text-[var(--text-secondary)]">
+            Edit PDFs, add text, shapes, drawings, and signatures. 100% Client-side.
+          </p>
+          <div class="mt-4 flex items-center text-[var(--accent-primary)] font-medium">
+            <span>Try it now</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 md:py-24 bg-[var(--bg-secondary)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Why Choose Us?</h2>
+        <p class="text-[var(--text-secondary)] max-w-2xl mx-auto">
+          We built the tools we wanted to use ourselves.
+        </p>
+      </div>
+      
+      <!-- Features Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Zero Ads</h3>
+          <p class="text-[var(--text-secondary)]">
+            No annoying pop-ups, no banners, no tracking scripts. Just the tools you need.
+          </p>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Blazing Fast</h3>
+          <p class="text-[var(--text-secondary)]">
+            Lightweight code and no server uploads mean instant results every time.
+          </p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Complete Privacy</h3>
+          <p class="text-[var(--text-secondary)]">
+            Your files never leave your device. All processing happens locally in your browser.
+          </p>
+        </div>
+        
+        <!-- Feature 4 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">No Sign-up Required</h3>
+          <p class="text-[var(--text-secondary)]">
+            Start using tools immediately. No email, no password, no account needed.
+          </p>
+        </div>
+        
+        <!-- Feature 5 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Works Everywhere</h3>
+          <p class="text-[var(--text-secondary)]">
+            Desktop, tablet, or phone. Our tools work on any modern browser.
+          </p>
+        </div>
+        
+        <!-- Feature 6 -->
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Open Source</h3>
+          <p class="text-[var(--text-secondary)]">
+            Transparent code you can trust. Contribute or verify how it works.
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">About WithoutAccount</h2>
+        <p class="text-lg text-[var(--text-secondary)] mb-6">
+          We got tired of websites that require sign-ups, bombard you with ads, 
+          and upload your files to unknown servers. So we built something better.
+        </p>
+        <p class="text-lg text-[var(--text-secondary)]">
+          Every tool on WithoutAccount runs entirely in your browser. Your files 
+          never leave your device, and we don't track anything you do. It's that simple.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-16 md:py-24 bg-[var(--bg-secondary)] relative overflow-hidden">
+    <!-- Background Decoration -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--accent-primary)] rounded-full blur-[120px] opacity-20"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--accent-secondary)] rounded-full blur-[120px] opacity-20"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+        <p class="text-[var(--text-secondary)]">
+          Common questions about our tools and privacy.
+        </p>
+      </div>
+      
+      <div class="space-y-6">
+        <!-- Q1 -->
+        <div class="glass-card p-6" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-xl font-semibold mb-2 flex items-center gap-2" itemprop="name">
+            <svg class="w-5 h-5 text-[var(--accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Is WithoutAccount completely free?
+          </h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-[var(--text-secondary)] pl-7" itemprop="text">
+              Yes, all tools on WithoutAccount are 100% free to use. There are no hidden fees, premium subscriptions, or paywalls. We are supported by our community and passion for open web.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="glass-card p-6" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-xl font-semibold mb-2 flex items-center gap-2" itemprop="name">
+            <svg class="w-5 h-5 text-[var(--accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            Is my data private and secure?
+          </h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-[var(--text-secondary)] pl-7" itemprop="text">
+              Absolutely. One of our core principles is privacy. All data processing happens <strong>locally in your browser</strong> using JavaScript. Your files (like images, PDFs, videos) are never uploaded to our servers or any third-party cloud. They stay on your device.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="glass-card p-6" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-xl font-semibold mb-2 flex items-center gap-2" itemprop="name">
+            <svg class="w-5 h-5 text-[var(--accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Do I need to create an account?
+          </h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-[var(--text-secondary)] pl-7" itemprop="text">
+              No. We don't believe in forcing sign-ups. You can start using any tool immediately without providing an email address or creating a password.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        
+        <!-- Brand -->
+        <div class="md:col-span-2">
+          <a href="/" class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">⚡</span>
+            <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+          </a>
+          <p class="text-[var(--text-secondary)] max-w-md">
+            Free online tools that respect your privacy. No account, no ads, no nonsense.
+          </p>
+        </div>
+        
+        <!-- Tools -->
+        <div>
+          <h4 class="font-semibold mb-4">Tools</h4>
+          <ul class="space-y-2">
+            <li><a href="tools/image-converter.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Image Converter</a></li>
+            <li><a href="tools/image-editor.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Image Editor</a></li>
+            <li><a href="tools/youtube-thumbnail-previewer.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">YouTube Thumbnail Previewer</a></li>
+            <li><a href="tools/word-counter.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Word Counter</a></li>
+            <li><a href="tools/color-converter.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Color Converter</a></li>
+            <li><a href="tools/audio-effect-suite.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Audio Effect Suite</a></li>
+            <li><a href="tools/markdown-editor.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Markdown Editor</a></li>
+            <li><a href="tools/video-converter.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Video Converter</a></li>
+            <li><a href="tools/video-editor.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Video Editor</a></li>
+            <li><a href="tools/qr-code.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">QR Code Tool</a></li>
+            <li><a href="tools/pdf-editor.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">PDF Editor</a></li>
+          </ul>
+        </div>
+        
+        <!-- Links -->
+        <div>
+          <h4 class="font-semibold mb-4">Links</h4>
+          <ul class="space-y-2">
+            <li><a href="#features" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Features</a></li>
+            <li><a href="#about" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">About</a></li>
+            <li><a href="#" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+      </div>
+      
+      <!-- Bottom Bar -->
+      <div class="border-t border-[var(--border-color)] mt-8 pt-8 text-center text-[var(--text-muted)]">
+        <p>© 2024 WithoutAccount. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="js/main.js"></script>
+</body>
+</html>

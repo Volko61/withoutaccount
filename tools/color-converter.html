@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free Color Converter - HEX, RGB, HSL, CMYK & More | WithoutAccount</title>
+  <meta name="description" content="Free online color converter. Convert between HEX, RGB, HSL, HSV, CMYK, LAB, XYZ, LCH, and 60+ color formats. Get CSS code, color harmonies, accessibility info. No account needed.">
+  <meta name="keywords" content="color converter, hex to rgb, rgb to hex, color picker, hsl, hsv, cmyk, color palette, css colors, color code, free, no account">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/color-converter.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Color Converter",
+        "item": "https://withoutaccount.com/tools/color-converter.html"
+      }]
+    }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Free Color Converter - HEX, RGB, HSL, CMYK & More | WithoutAccount">
+  <meta property="og:description" content="Convert between 60+ color formats instantly. Get CSS code, color harmonies, and accessibility info. 100% free and private.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/color-converter">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Color Converter",
+    "description": "Convert between 60+ color formats including HEX, RGB, HSL, HSV, CMYK, LAB, XYZ, and more.",
+    "url": "https://withoutaccount.com/tools/color-converter",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  
+  <style>
+    /* Tool-specific styles */
+    .color-preview {
+      width: 100%;
+      height: 180px;
+      border-radius: 1rem;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .color-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+      pointer-events: none;
+    }
+    
+    .color-input-wrapper {
+      position: relative;
+    }
+    
+    .color-input {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      font-size: 1.125rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      width: 100%;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .color-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    
+    .color-input::placeholder {
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .format-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 0.875rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .format-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .format-card.copied {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    
+    .format-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+    
+    .format-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+    
+    .section-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.25rem;
+    }
+    
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .section-title svg {
+      color: var(--accent-primary);
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+    
+    .harmony-swatch {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 0.5rem;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .harmony-swatch:hover {
+      transform: scale(1.1);
+      z-index: 10;
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .harmony-swatch.copied {
+      border-color: #10b981;
+    }
+    
+    .accessibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .accessibility-badge.pass {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .accessibility-badge.fail {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .color-picker-btn {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      border: 2px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+    
+    .color-picker-btn:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    #native-color-picker {
+      position: absolute;
+      opacity: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      cursor: pointer;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      background: var(--bg-tertiary);
+      padding: 0.25rem;
+      border-radius: 0.75rem;
+    }
+    
+    .tab-btn {
+      padding: 0.5rem 0.875rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      font-size: 0.8rem;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+    
+    .tab-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .named-color-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: var(--bg-tertiary);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    
+    .named-color-chip:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-1px);
+    }
+    
+    .named-color-chip .swatch {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 0.25rem;
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+    
+    .named-color-chip .name {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .contrast-preview {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .slider-container {
+      margin-bottom: 1rem;
+    }
+    
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      appearance: none;
+      background: var(--bg-tertiary);
+      outline: none;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      transition: background 0.2s ease;
+    }
+    
+    .suggestion-item:hover {
+      background: var(--bg-tertiary);
+    }
+    
+    .suggestion-swatch {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-color);
+    }
+    
+    .copy-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      box-shadow: var(--shadow-xl);
+      font-weight: 500;
+      font-size: 0.875rem;
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .copy-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .copy-toast svg {
+      color: #10b981;
+    }
+
+    /* Quick Actions */
+    .quick-action {
+      padding: 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .quick-action:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    /* Gradient preview */
+    .gradient-preview {
+      height: 60px;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Color Converter</span>
+        </nav>
+        
+        <!-- Theme Toggle -->
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: var(--accent-gradient);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Color Converter</h1>
+        <p class="text-[var(--text-secondary)] max-w-2xl mx-auto">
+          Convert colors between 60+ formats instantly. Get CSS code, harmonies, accessibility scores, and more.
+        </p>
+      </div>
+      
+      <!-- Privacy Badge -->
+      <div class="flex justify-center mb-8">
+        <span class="feature-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          100% client-side - no data sent to servers
+        </span>
+      </div>
+      
+      <!-- Main Tool Area -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Left Column: Input & Preview -->
+        <div class="lg:col-span-1 space-y-6">
+          
+          <!-- Color Input -->
+          <div class="section-card">
+            <label class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+              Enter Color
+            </label>
+            <div class="color-input-wrapper mb-4">
+              <input 
+                type="text" 
+                id="color-input" 
+                class="color-input pr-14" 
+                placeholder="#6366f1 or rgb(99,102,241) or blue..."
+                autocomplete="off"
+              >
+              <div class="color-picker-btn" id="color-picker-display">
+                <input type="color" id="native-color-picker" value="#6366f1">
+              </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button class="quick-action" data-action="random">🎲 Random</button>
+              <button class="quick-action" data-action="invert">🔄 Invert</button>
+              <button class="quick-action" data-action="lighten">☀️ Lighten</button>
+              <button class="quick-action" data-action="darken">🌙 Darken</button>
+              <button class="quick-action" data-action="saturate">💎 Saturate</button>
+              <button class="quick-action" data-action="desaturate">🌫️ Desaturate</button>
+            </div>
+            
+            <!-- Color Preview -->
+            <div class="color-preview" id="color-preview" style="background: #6366f1;"></div>
+          </div>
+          
+          <!-- Color Harmonies -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+              Color Harmonies
+            </h3>
+            
+            <div class="tabs text-xs">
+              <button class="tab-btn active text-xs" data-harmony="complementary">Complementary</button>
+              <button class="tab-btn text-xs" data-harmony="analogous">Analogous</button>
+              <button class="tab-btn text-xs" data-harmony="triadic">Triadic</button>
+              <button class="tab-btn text-xs" data-harmony="split">Split</button>
+              <button class="tab-btn text-xs" data-harmony="tetradic">Tetradic</button>
+              <button class="tab-btn text-xs" data-harmony="monochromatic">Mono</button>
+            </div>
+            
+            <div id="harmony-swatches" class="grid grid-cols-5 gap-2">
+              <!-- Harmony swatches will be generated here -->
+            </div>
+          </div>
+          
+          <!-- Accessibility -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              Accessibility (WCAG)
+            </h3>
+            
+            <div class="space-y-3">
+              <div>
+                <div class="text-xs text-[var(--text-muted)] mb-1">vs White (#FFFFFF)</div>
+                <div class="contrast-preview" id="contrast-white" style="background: #6366f1; color: white;">
+                  Sample Text
+                </div>
+                <div class="flex gap-2 mt-2 flex-wrap" id="wcag-white-badges">
+                  <!-- WCAG badges -->
+                </div>
+              </div>
+              <div>
+                <div class="text-xs text-[var(--text-muted)] mb-1">vs Black (#000000)</div>
+                <div class="contrast-preview" id="contrast-black" style="background: #6366f1; color: black;">
+                  Sample Text
+                </div>
+                <div class="flex gap-2 mt-2 flex-wrap" id="wcag-black-badges">
+                  <!-- WCAG badges -->
+                </div>
+              </div>
+              <div class="text-center mt-3">
+                <div class="text-xs text-[var(--text-muted)]">Luminance</div>
+                <div class="text-lg font-semibold gradient-text" id="luminance-value">0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column: All Formats -->
+        <div class="lg:col-span-2">
+          <div class="section-card">
+            <h3 class="section-title mb-4">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+              </svg>
+              All Color Formats (Click to Copy)
+            </h3>
+            
+            <div class="tabs">
+              <button class="tab-btn active" data-format-tab="common">Common</button>
+              <button class="tab-btn" data-format-tab="css">CSS</button>
+              <button class="tab-btn" data-format-tab="print">Print</button>
+              <button class="tab-btn" data-format-tab="science">Scientific</button>
+              <button class="tab-btn" data-format-tab="code">Code</button>
+              <button class="tab-btn" data-format-tab="special">Special</button>
+            </div>
+            
+            <!-- Common Formats -->
+            <div id="formats-common" class="tab-content active">
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="common-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+            
+            <!-- CSS Formats -->
+            <div id="formats-css" class="tab-content">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="css-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+            
+            <!-- Print Formats -->
+            <div id="formats-print" class="tab-content">
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="print-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+            
+            <!-- Scientific Formats -->
+            <div id="formats-science" class="tab-content">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="science-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+            
+            <!-- Code Formats -->
+            <div id="formats-code" class="tab-content">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="code-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+            
+            <!-- Special Formats -->
+            <div id="formats-special" class="tab-content">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="special-formats">
+                <!-- Format cards generated by JS -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Color Info -->
+          <div class="section-card mt-6">
+            <h3 class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Color Information
+            </h3>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Temperature</div>
+                <div class="font-semibold text-sm" id="info-temperature">Neutral</div>
+              </div>
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Brightness</div>
+                <div class="font-semibold text-sm" id="info-brightness">50%</div>
+              </div>
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Saturation</div>
+                <div class="font-semibold text-sm" id="info-saturation">50%</div>
+              </div>
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Hue</div>
+                <div class="font-semibold text-sm" id="info-hue">0°</div>
+              </div>
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Closest Named</div>
+                <div class="font-semibold text-sm truncate" id="info-named">Unknown</div>
+              </div>
+              <div class="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+                <div class="text-xs text-[var(--text-muted)] mb-1">Is Web Safe</div>
+                <div class="font-semibold text-sm" id="info-websafe">No</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Shades & Tints -->
+          <div class="section-card mt-6">
+            <h3 class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              Shades & Tints
+            </h3>
+            
+            <div class="mb-4">
+              <div class="text-xs text-[var(--text-muted)] mb-2">Tints (Add White)</div>
+              <div class="grid grid-cols-10 gap-1" id="tints-row">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-[var(--text-muted)] mb-2">Shades (Add Black)</div>
+              <div class="grid grid-cols-10 gap-1" id="shades-row">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Gradient Generator -->
+          <div class="section-card mt-6">
+            <h3 class="section-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+              </svg>
+              Gradient Previews
+            </h3>
+            
+            <div class="space-y-3">
+              <div>
+                <div class="text-xs text-[var(--text-muted)] mb-1">To White</div>
+                <div class="gradient-preview" id="gradient-to-white"></div>
+              </div>
+              <div>
+                <div class="text-xs text-[var(--text-muted)] mb-1">To Black</div>
+                <div class="gradient-preview" id="gradient-to-black"></div>
+              </div>
+              <div>
+                <div class="text-xs text-[var(--text-muted)] mb-1">To Complementary</div>
+                <div class="gradient-preview" id="gradient-to-complement"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Named Colors Reference -->
+      <div class="section-card">
+        <h3 class="section-title">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          CSS Named Colors (Click to use)
+        </h3>
+        
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <button class="quick-action text-xs" data-color-filter="all">All</button>
+          <button class="quick-action text-xs" data-color-filter="red">Reds</button>
+          <button class="quick-action text-xs" data-color-filter="orange">Oranges</button>
+          <button class="quick-action text-xs" data-color-filter="yellow">Yellows</button>
+          <button class="quick-action text-xs" data-color-filter="green">Greens</button>
+          <button class="quick-action text-xs" data-color-filter="blue">Blues</button>
+          <button class="quick-action text-xs" data-color-filter="purple">Purples</button>
+          <button class="quick-action text-xs" data-color-filter="pink">Pinks</button>
+          <button class="quick-action text-xs" data-color-filter="brown">Browns</button>
+          <button class="quick-action text-xs" data-color-filter="gray">Grays</button>
+        </div>
+        
+        <div id="named-colors" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 max-h-64 overflow-y-auto">
+          <!-- Named colors generated by JS -->
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- Copy Toast -->
+  <div id="copy-toast" class="copy-toast">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    <span id="toast-message">Copied!</span>
+  </div>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Color Converter JS -->
+  <script src="../js/color-converter.js"></script>
+</body>
+</html>

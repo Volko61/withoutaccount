@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Analytics -->
+  <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
+  
+  <!-- SEO Meta Tags -->
+  <title>Free Image Converter - PNG, JPG, WebP | WithoutAccount</title>
+  <meta name="description" content="Convert images between PNG, JPG, WebP, and GIF for free. No upload required - everything happens in your browser. Fast, private, and easy.">
+  <meta name="keywords" content="image converter, png to jpg, jpg to webp, image format converter, free, no account">
+  <meta name="author" content="WithoutAccount">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://withoutaccount.com/tools/image-converter.html">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://withoutaccount.com"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://withoutaccount.com/#tools"
+      },{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Image Converter",
+        "item": "https://withoutaccount.com/tools/image-converter.html"
+      }]
+    }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Free Image Converter - PNG, JPG, WebP | WithoutAccount">
+  <meta property="og:description" content="Convert images between PNG, JPG, WebP, and GIF for free. No upload, 100% private.">
+  <meta property="og:url" content="https://withoutaccount.com/tools/image-converter">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- TailwindCSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <!-- Theme Script -->
+  <script src="../js/theme.js"></script>
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Image Converter",
+    "description": "Convert images between PNG, JPG, WebP, and GIF for free",
+    "url": "https://withoutaccount.com/tools/image-converter",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  
+  <style>
+    /* Tool-specific styles */
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+    
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .drop-zone.dragover {
+      transform: scale(1.02);
+    }
+    
+    .preview-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .preview-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .preview-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .preview-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: repeating-conic-gradient(var(--bg-tertiary) 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+    }
+    
+    .format-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .format-btn:hover {
+      background: var(--bg-tertiary);
+    }
+    
+    .format-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+      border-color: transparent;
+    }
+    
+    .quality-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      outline: none;
+    }
+    
+    .quality-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .quality-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    
+    .quality-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      border: none;
+    }
+    
+    .processing-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+    }
+    
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <!-- Header -->
+  <header id="header" class="header fixed top-0 left-0 right-0 z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="../index.html" class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <span class="text-xl font-bold gradient-text">WithoutAccount</span>
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav class="hidden md:flex items-center gap-2 text-sm">
+          <a href="../index.html" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <a href="../index.html#tools" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Tools</a>
+          <span class="text-[var(--text-muted)]">/</span>
+          <span class="text-[var(--accent-primary)]">Image Converter</span>
+        </nav>
+        
+        <!-- Theme Toggle -->
+        <button data-theme-toggle class="theme-toggle" aria-label="Toggle theme">
+          <svg id="theme-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: var(--accent-gradient);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">Image Converter</h1>
+        <p class="text-[var(--text-secondary)] max-w-xl mx-auto">
+          Convert images between PNG, JPG, WebP, and GIF. 100% client-side — your files never leave your device.
+        </p>
+      </div>
+      
+      <!-- Privacy Badge -->
+      <div class="flex justify-center mb-8">
+        <span class="feature-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Files processed locally in your browser
+        </span>
+      </div>
+      
+      <!-- Drop Zone -->
+      <div id="drop-zone" class="drop-zone mb-8">
+        <input type="file" id="file-input" accept="image/*" multiple class="hidden">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background: var(--accent-gradient);">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-lg font-medium mb-1">Drop images here or click to browse</p>
+            <p class="text-sm text-[var(--text-secondary)]">Supports PNG, JPG, WebP, GIF • Multiple files allowed</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Conversion Options (hidden until files added) -->
+      <div id="options-panel" class="glass-card p-6 mb-8 hidden">
+        <h2 class="text-lg font-semibold mb-4">Conversion Options</h2>
+        
+        <!-- Output Format -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-3">Output Format</label>
+          <div class="flex flex-wrap gap-2">
+            <button class="format-btn active" data-format="png">PNG</button>
+            <button class="format-btn" data-format="jpeg">JPG</button>
+            <button class="format-btn" data-format="webp">WebP</button>
+            <button class="format-btn" data-format="gif">GIF</button>
+          </div>
+        </div>
+        
+        <!-- Quality Slider (for lossy formats) -->
+        <div id="quality-section" class="mb-6">
+          <div class="flex justify-between items-center mb-3">
+            <label class="text-sm font-medium">Quality</label>
+            <span id="quality-value" class="text-sm text-[var(--accent-primary)] font-medium">90%</span>
+          </div>
+          <input type="range" id="quality-slider" class="quality-slider" min="10" max="100" value="90">
+          <div class="flex justify-between text-xs text-[var(--text-muted)] mt-1">
+            <span>Smaller file</span>
+            <span>Better quality</span>
+          </div>
+        </div>
+        
+        <!-- Convert Button -->
+        <button id="convert-btn" class="btn-accent w-full py-4 text-lg" onclick="umami.track('Image Converter: Convert Click')">
+          Convert Images
+        </button>
+      </div>
+      
+      <!-- Preview Section -->
+      <div id="preview-section" class="hidden">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold">Images</h2>
+          <button id="clear-btn" class="text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+            Clear all
+          </button>
+        </div>
+        <div id="preview-container" class="preview-container">
+          <!-- Preview cards will be inserted here -->
+        </div>
+      </div>
+      
+      <!-- Download All Section -->
+      <div id="download-section" class="hidden mt-8">
+        <button id="download-all-btn" class="btn-accent w-full py-4 text-lg" onclick="umami.track('Image Converter: Download All Click')">
+          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Download All Converted Images
+        </button>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- More Tools -->
+  <section class="py-12 bg-opacity-50 border-t border-[var(--border-color)] mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 class="text-2xl font-bold mb-6 text-center">Explore More Tools</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="image-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Image Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Convert PNG, JPG, WebP</div>
+        </a>
+        <a href="word-counter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Word Counter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Count words & chars</div>
+        </a>
+        <a href="color-converter.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Color Converter</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">HEX, RGB, HSL tools</div>
+        </a>
+        <a href="youtube-thumbnail-previewer.html" class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-colors text-center">
+          <div class="font-semibold">Thumbnail Preview</div>
+          <div class="text-xs text-[var(--text-secondary)] mt-1">Test YouTube thumbs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-[var(--text-muted)]">
+      <p>© 2024 WithoutAccount. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+  
+  <!-- Image Converter JS -->
+  <script src="../js/image-converter.js"></script>
+</body>
+</html>
