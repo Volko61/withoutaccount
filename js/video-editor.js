@@ -560,7 +560,7 @@ function addAssetToUI(asset) {
     } else if (asset.type === 'image') {
         thumb = '<div class="w-10 h-10 bg-black rounded overflow-hidden flex-shrink-0"><img src="' + asset.url + '" class="w-full h-full object-cover"></div>';
     } else {
-        thumb = '<div class="w-10 h-10 bg-gray-700 rounded flex items-center justify-center text-lg">🎵</div>';
+        thumb = '<div class="w-10 h-10 bg-gray-700 rounded flex items-center justify-center text-xs font-semibold text-white">AUDIO</div>';
     }
 
     div.innerHTML = thumb + '<div class="flex-1 min-w-0"><div class="truncate text-xs font-medium" title="' + asset.name + '">' + asset.name + '</div><div class="text-xs opacity-60">' + formatTime(asset.info.duration || 0) + '</div></div>' +

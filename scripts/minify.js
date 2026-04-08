@@ -23,7 +23,9 @@ const CONFIG = {
     // Files and directories to process
     htmlFiles: [
         'index.html',
+        'blog.html',
         '404.html',
+        'blog/*.html',
         'tools/*.html'
     ],
     cssFiles: [
@@ -270,35 +272,35 @@ async function copyFile(filePath) {
 async function build() {
     const startTime = Date.now();
 
-    console.log('\n🔧 Starting minification...\n');
+    console.log('\nStarting minification...\n');
 
     // Clean dist directory
-    console.log('📁 Cleaning dist directory...');
+    console.log('Cleaning dist directory...');
     await fs.emptyDir(CONFIG.distDir);
 
     // Minify HTML files
-    console.log('\n📄 Minifying HTML files...');
+    console.log('\nMinifying HTML files...');
     const htmlFiles = getFiles(CONFIG.htmlFiles, CONFIG.srcDir);
     for (const file of htmlFiles) {
         await minifyHTMLFile(file);
     }
 
     // Minify CSS files
-    console.log('\n🎨 Minifying CSS files...');
+    console.log('\nMinifying CSS files...');
     const cssFiles = getFiles(CONFIG.cssFiles, CONFIG.srcDir);
     for (const file of cssFiles) {
         await minifyCSSFile(file);
     }
 
     // Minify JS files
-    console.log('\n⚡ Minifying JavaScript files...');
+    console.log('\nMinifying JavaScript files...');
     const jsFiles = getFiles(CONFIG.jsFiles, CONFIG.srcDir);
     for (const file of jsFiles) {
         await minifyJSFile(file);
     }
 
     // Copy files as-is
-    console.log('\n📋 Copying other files...');
+    console.log('\nCopying other files...');
     const copyFiles = getFiles(CONFIG.copyAsIs, CONFIG.srcDir);
     for (const file of copyFiles) {
         await copyFile(file);
@@ -310,7 +312,7 @@ async function build() {
     const totalMinified = stats.html.minifiedSize + stats.css.minifiedSize + stats.js.minifiedSize;
 
     console.log('\n' + '═'.repeat(60));
-    console.log('📊 Minification Summary');
+    console.log('Minification Summary');
     console.log('═'.repeat(60));
     console.log(`\n  HTML: ${stats.html.files} files`);
     console.log(`        ${formatBytes(stats.html.originalSize)} → ${formatBytes(stats.html.minifiedSize)} (saved ${formatPercent(stats.html.originalSize, stats.html.minifiedSize)})`);
@@ -323,14 +325,14 @@ async function build() {
     console.log(`  Total: ${formatBytes(totalOriginal)} → ${formatBytes(totalMinified)} (saved ${formatPercent(totalOriginal, totalMinified)})`);
     console.log(`  Time:  ${duration}s`);
     console.log('═'.repeat(60));
-    console.log(`\n✅ Build complete! Output: ${CONFIG.distDir}\n`);
+    console.log(`\nBuild complete! Output: ${CONFIG.distDir}\n`);
 }
 
 // Watch mode
 async function watch() {
     const chokidar = require('chokidar');
 
-    console.log('\n👀 Watch mode enabled. Watching for changes...\n');
+    console.log('\nWatch mode enabled. Watching for changes...\n');
 
     // Initial build
     await build();
@@ -353,7 +355,7 @@ async function watch() {
 
     watcher.on('change', async (filePath) => {
         const relativePath = path.relative(CONFIG.srcDir, filePath);
-        console.log(`\n📝 Changed: ${relativePath}`);
+        console.log(`\nChanged: ${relativePath}`);
 
         // Reset stats
         Object.keys(stats).forEach(key => {
@@ -373,14 +375,14 @@ async function watch() {
 
     watcher.on('add', async (filePath) => {
         const relativePath = path.relative(CONFIG.srcDir, filePath);
-        console.log(`\n➕ Added: ${relativePath}`);
+        console.log(`\nAdded: ${relativePath}`);
         await build();
     });
 
     watcher.on('unlink', async (filePath) => {
         const relativePath = path.relative(CONFIG.srcDir, filePath);
         const distPath = path.join(CONFIG.distDir, relativePath);
-        console.log(`\n➖ Deleted: ${relativePath}`);
+        console.log(`\nDeleted: ${relativePath}`);
         await fs.remove(distPath);
     });
 }

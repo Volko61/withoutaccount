@@ -8,27 +8,27 @@
   <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
 
   <!-- SEO Meta Tags -->
-  <title>WithoutAccount - Free Online Tools, No Ads, No Sign-up</title>
-  <meta name="description" content="Free online tools with no ads, no account required. Image converter, PDF tools, and more. Fast, private, and easy to use.">
-  <meta name="keywords" content="free online tools, image converter, no ads, no account, privacy, fast tools">
+  <title>WithoutAccount - Private Browser Tools</title>
+  <meta name="description" content="Practical browser-based tools for images, video, PDFs, text, and more. No account, no uploads, no clutter.">
+  <meta name="keywords" content="browser tools, private tools, image converter, pdf editor, no account, local tools">
   <meta name="author" content="WithoutAccount">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://withoutaccount.com/">
   
   <!-- Open Graph / Social -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WithoutAccount - Free Online Tools, No Ads">
-  <meta property="og:description" content="Free online tools with no ads, no account required. Fast, private, and easy to use.">
+  <meta property="og:title" content="WithoutAccount - Private Browser Tools">
+  <meta property="og:description" content="Practical browser-based tools for images, video, PDFs, text, and more. No account, no uploads, no clutter.">
   <meta property="og:url" content="https://withoutaccount.com">
   <meta property="og:site_name" content="WithoutAccount">
   
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WithoutAccount - Free Online Tools, No Ads">
-  <meta name="twitter:description" content="Free online tools with no ads, no account required. Fast, private, and easy to use.">
+  <meta name="twitter:title" content="WithoutAccount - Private Browser Tools">
+  <meta name="twitter:description" content="Practical browser-based tools for images, video, PDFs, text, and more. No account, no uploads, no clutter.">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='14' y='14' width='72' height='72' rx='18' fill='%23234b7a'/><path d='M32 38h36v8H48l20 16v10H32v-8h20L32 48z' fill='white'/></svg>">
   
   <!-- Fonts - Non-blocking with preconnect and preload -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,10 +48,10 @@
     /* Font fallback with adjusted metrics to prevent CLS */
     @font-face{font-family:'Inter Fallback';src:local('Arial');size-adjust:107%;ascent-override:90%;descent-override:25%;line-gap-override:0%}
     /* Critical CSS to prevent FOUC */
-    :root{--bg-primary:#f8fafc;--bg-secondary:#ffffff;--text-primary:#0f172a;--accent-primary:#4f46e5;--accent-gradient:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#9333ea 100%)}
-    .dark{--bg-primary:#0f172a;--bg-secondary:#1e293b;--text-primary:#f8fafc;--accent-primary:#818cf8}
+    :root{--bg-primary:#f8fafc;--bg-secondary:#ffffff;--text-primary:#0f172a;--accent-primary:#234b7a;--accent-gradient:#234b7a}
+    .dark{--bg-primary:#0f172a;--bg-secondary:#1e293b;--text-primary:#f8fafc;--accent-primary:#7dd3fc}
     body{background-color:var(--bg-primary);color:var(--text-primary);font-family:'Inter','Inter Fallback',system-ui,-apple-system,sans-serif;margin:0}
-    .gradient-text{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .gradient-text{color:var(--accent-primary)}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     /* Reserve space for header to prevent CLS */
     .header{height:64px}
@@ -124,7 +124,7 @@
         
         <!-- Logo -->
         <a href="/" class="flex items-center gap-2">
-          <span class="text-2xl">⚡</span>
+          <span class="brand-mark" aria-hidden="true">WA</span>
           <span class="text-xl font-bold gradient-text">WithoutAccount</span>
         </a>
         
@@ -132,6 +132,7 @@
         <nav class="hidden md:flex items-center gap-1">
           <a href="#tools" class="nav-link">Tools</a>
           <a href="#features" class="nav-link">Features</a>
+          <a href="blog.html" class="nav-link">Blog</a>
           <a href="#about" class="nav-link">About</a>
         </nav>
         
@@ -162,7 +163,7 @@
   <div id="mobile-menu" class="mobile-menu md:hidden">
     <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]">
       <a href="/" class="flex items-center gap-2">
-        <span class="text-2xl">⚡</span>
+        <span class="brand-mark" aria-hidden="true">WA</span>
         <span class="text-xl font-bold gradient-text">WithoutAccount</span>
       </a>
       <button id="mobile-menu-close" class="theme-toggle" aria-label="Close menu">
@@ -174,6 +175,7 @@
     <nav class="p-4 flex flex-col gap-2">
       <a href="#tools" class="nav-link text-lg py-3">Tools</a>
       <a href="#features" class="nav-link text-lg py-3">Features</a>
+      <a href="blog.html" class="nav-link text-lg py-3">Blog</a>
       <a href="#about" class="nav-link text-lg py-3">About</a>
     </nav>
   </div>
@@ -198,26 +200,26 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            Lightning Fast
+            Browser Native
           </span>
           <span class="feature-badge">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
             </svg>
-            100% Private
+            Private by Default
           </span>
         </div>
         
         <!-- Main Headline -->
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 fade-in fade-in-delay-1">
-          Free Tools,
-          <span class="gradient-text">Without the Hassle</span>
+          Practical tools,
+          <span class="gradient-text">built for the browser</span>
         </h1>
         
         <!-- Subheadline -->
         <p class="text-lg md:text-xl text-[var(--text-secondary)] mb-10 max-w-2xl mx-auto fade-in fade-in-delay-2">
-          Powerful online tools that respect your privacy. No account needed, no ads, 
-          no tracking. Everything runs in your browser.
+          Simple tools for images, video, PDF files, text, and colors. No account needed,
+          no uploads, and nothing in the way when you need a quick edit.
         </p>
         
         <!-- CTA Buttons -->
@@ -225,8 +227,8 @@
           <a href="#tools" class="btn-accent text-lg px-8 py-4">
             Explore Tools
           </a>
-          <a href="#features" class="btn-secondary text-lg px-8 py-4">
-            Learn More
+          <a href="blog.html" class="btn-secondary text-lg px-8 py-4">
+            Read the Blog
           </a>
         </div>
       </div>
@@ -597,6 +599,68 @@
     </div>
   </section>
 
+  <!-- Blog Preview Section -->
+  <section id="blog" class="py-16 md:py-24 blog-surface">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+        <div class="max-w-2xl">
+          <span class="blog-chip mb-4">Blog</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Practical notes on private browser tools</h2>
+          <p class="text-[var(--text-secondary)] text-lg">
+            Short guides, workflow tips, and technical notes about getting more done without sending your files to a server.
+          </p>
+        </div>
+        <a href="blog.html" class="btn-secondary inline-flex items-center justify-center px-6 py-3">
+          Open the full blog
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>Workflow</span><span>6 min read</span></p>
+          <h3 class="text-xl font-semibold mb-3">Why browser-based tools feel faster in practice</h3>
+          <p class="text-[var(--text-secondary)] mb-4">A quick look at why local editing, fewer steps, and no account wall matter more than flashy dashboards.</p>
+          <a href="blog/browser-tools-faster.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Read more <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>Images</span><span>7 min read</span></p>
+          <h3 class="text-xl font-semibold mb-3">A simple image workflow without uploads</h3>
+          <p class="text-[var(--text-secondary)] mb-4">Convert, resize, and edit images entirely inside the browser.</p>
+          <a href="blog/image-workflow.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Read more <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>PDF</span><span>6 min read</span></p>
+          <h3 class="text-xl font-semibold mb-3">A practical PDF workflow without installing software</h3>
+          <p class="text-[var(--text-secondary)] mb-4">Useful methods for small document tasks without a desktop suite.</p>
+          <a href="blog/pdf-workflow.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Read more <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>SEO</span><span>7 min read</span></p>
+          <h3 class="text-xl font-semibold mb-3">How a small blog helps a utility site rank</h3>
+          <p class="text-[var(--text-secondary)] mb-4">Multiple focused articles give search engines more context and help people land on the exact tool they need.</p>
+          <a href="blog/seo-utility-site.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Read more <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>Privacy</span><span>6 min read</span></p>
+          <h3 class="text-xl font-semibold mb-3">A practical privacy checklist for everyday file work</h3>
+          <p class="text-[var(--text-secondary)] mb-4">Use tools that keep files on-device, show clear controls, and avoid extra steps that create friction.</p>
+          <a href="blog/privacy-checklist.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Read more <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="blog-card">
+          <p class="blog-meta mb-3"><span>Archive</span><span>All posts</span></p>
+          <h3 class="text-xl font-semibold mb-3">Open the full blog archive</h3>
+          <p class="text-[var(--text-secondary)] mb-4">Read every article in one place and move between topics without losing the broader context.</p>
+          <a href="blog.html" class="text-[var(--accent-primary)] font-semibold inline-flex items-center gap-2">Open archive <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- FAQ Section -->
   <section id="faq" class="py-16 md:py-24 bg-[var(--bg-secondary)] relative overflow-hidden">
     <!-- Background Decoration -->
@@ -672,7 +736,7 @@
         <!-- Brand -->
         <div class="md:col-span-2">
           <a href="/" class="flex items-center gap-2 mb-4">
-            <span class="text-2xl">⚡</span>
+            <span class="brand-mark" aria-hidden="true">WA</span>
             <span class="text-xl font-bold gradient-text">WithoutAccount</span>
           </a>
           <p class="text-[var(--text-secondary)] max-w-md">
@@ -702,8 +766,10 @@
         <div>
           <h4 class="font-semibold mb-4">Links</h4>
           <ul class="space-y-2">
+            <li><a href="blog.html" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Blog</a></li>
             <li><a href="#features" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Features</a></li>
             <li><a href="#about" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">About</a></li>
+            <li><a href="https://github.com/Volko61/withoutaccount" target="_blank" rel="noopener noreferrer" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">GitHub</a></li>
             <li><a href="#" class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">Privacy Policy</a></li>
           </ul>
         </div>
@@ -712,6 +778,7 @@
       
       <!-- Bottom Bar -->
       <div class="border-t border-[var(--border-color)] mt-8 pt-8 text-center text-[var(--text-muted)]">
+        <p class="mb-2"><a href="https://github.com/Volko61/withoutaccount" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-primary)] transition-colors">GitHub repository</a></p>
         <p>© 2024 WithoutAccount. All rights reserved.</p>
       </div>
     </div>

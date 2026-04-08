@@ -41,7 +41,7 @@
     const TOPICS = {
         technology: {
             name: 'Technology',
-            icon: '💻',
+            icon: 'TECH',
             keywords: ['software', 'computer', 'code', 'programming', 'app', 'data', 'ai', 'artificial', 'intelligence',
                 'machine', 'learning', 'algorithm', 'digital', 'internet', 'web', 'system', 'database', 'cloud',
                 'server', 'network', 'developer', 'api', 'framework', 'technology', 'tech', 'automation', 'robot',
@@ -49,63 +49,63 @@
         },
         business: {
             name: 'Business',
-            icon: '💼',
+            icon: 'BUS',
             keywords: ['company', 'market', 'sales', 'revenue', 'strategy', 'growth', 'business', 'enterprise', 'corporate',
                 'management', 'customer', 'client', 'profit', 'investment', 'startup', 'entrepreneur', 'marketing',
                 'brand', 'product', 'service', 'industry', 'competition', 'partnership', 'deal', 'contract']
         },
         science: {
             name: 'Science',
-            icon: '🔬',
+            icon: 'SCI',
             keywords: ['research', 'study', 'experiment', 'theory', 'hypothesis', 'science', 'scientific', 'laboratory',
                 'analysis', 'discovery', 'observation', 'evidence', 'data', 'method', 'biology', 'chemistry',
                 'physics', 'mathematics', 'statistics', 'genetics', 'evolution', 'molecule', 'atom', 'energy']
         },
         health: {
             name: 'Health',
-            icon: '🏥',
+            icon: 'HLTH',
             keywords: ['medicine', 'health', 'doctor', 'treatment', 'symptoms', 'patient', 'hospital', 'medical',
                 'disease', 'diagnosis', 'therapy', 'healthcare', 'wellness', 'nutrition', 'exercise', 'mental',
                 'physical', 'vaccine', 'drug', 'pharmaceutical', 'surgery', 'nurse', 'clinic', 'recovery']
         },
         education: {
             name: 'Education',
-            icon: '📚',
+            icon: 'EDU',
             keywords: ['school', 'learning', 'student', 'teacher', 'course', 'education', 'university', 'college',
                 'class', 'lesson', 'curriculum', 'degree', 'academic', 'study', 'knowledge', 'training',
                 'skill', 'exam', 'test', 'grade', 'professor', 'lecture', 'assignment', 'homework']
         },
         finance: {
             name: 'Finance',
-            icon: '💰',
+            icon: 'FIN',
             keywords: ['money', 'investment', 'budget', 'stock', 'banking', 'finance', 'financial', 'bank', 'loan',
                 'credit', 'debt', 'interest', 'savings', 'currency', 'tax', 'income', 'expense', 'payment',
                 'fund', 'portfolio', 'dividend', 'bond', 'insurance', 'mortgage', 'wealth']
         },
         travel: {
             name: 'Travel',
-            icon: '✈️',
+            icon: 'TRVL',
             keywords: ['trip', 'destination', 'hotel', 'flight', 'vacation', 'travel', 'tourist', 'tourism', 'journey',
                 'adventure', 'explore', 'beach', 'mountain', 'city', 'country', 'passport', 'airport', 'booking',
                 'resort', 'cruise', 'backpack', 'itinerary', 'sightseeing', 'culture']
         },
         food: {
             name: 'Food',
-            icon: '🍳',
+            icon: 'FOOD',
             keywords: ['recipe', 'cooking', 'ingredient', 'restaurant', 'meal', 'food', 'chef', 'kitchen', 'dish',
                 'cuisine', 'taste', 'flavor', 'delicious', 'bake', 'grill', 'fry', 'vegetable', 'fruit',
                 'meat', 'dessert', 'breakfast', 'lunch', 'dinner', 'organic', 'diet']
         },
         sports: {
             name: 'Sports',
-            icon: '⚽',
+            icon: 'SPORT',
             keywords: ['game', 'team', 'player', 'score', 'championship', 'sport', 'sports', 'match', 'competition',
                 'athlete', 'coach', 'training', 'fitness', 'workout', 'football', 'basketball', 'soccer',
                 'tennis', 'golf', 'swimming', 'running', 'marathon', 'olympics', 'league', 'tournament']
         },
         entertainment: {
             name: 'Entertainment',
-            icon: '🎬',
+            icon: 'MEDIA',
             keywords: ['movie', 'music', 'show', 'artist', 'concert', 'entertainment', 'film', 'actor', 'actress',
                 'director', 'song', 'album', 'band', 'singer', 'streaming', 'netflix', 'youtube', 'tv',
                 'television', 'series', 'episode', 'celebrity', 'performance', 'theater', 'comedy']
