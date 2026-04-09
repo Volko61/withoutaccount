@@ -8,9 +8,9 @@
   <script defer src="https://umami.fablia.fr/script.js" data-website-id="9c50a95e-79d5-4679-93ec-4b6d1c91cc39"></script>
   
   <!-- SEO Meta Tags -->
-  <title>Free Image Converter - PNG, JPG, WebP | WithoutAccount</title>
-  <meta name="description" content="Convert images between PNG, JPG, WebP, and GIF for free. No upload required - everything happens in your browser. Fast, private, and easy.">
-  <meta name="keywords" content="image converter, png to jpg, jpg to webp, image format converter, free, no account">
+  <title>Free Image Converter - PNG, JPG, WebP, GIF, AVIF, ICO | WithoutAccount</title>
+  <meta name="description" content="Convert images between PNG, JPG, WebP, GIF, AVIF, and ICO for free. No upload required - everything happens in your browser. Fast, private, and easy.">
+  <meta name="keywords" content="image converter, png to jpg, jpg to webp, ico converter, avif converter, image format converter, free, no account">
   <meta name="author" content="WithoutAccount">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://withoutaccount.com/tools/image-converter.html">
@@ -39,12 +39,13 @@
   
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Free Image Converter - PNG, JPG, WebP | WithoutAccount">
-  <meta property="og:description" content="Convert images between PNG, JPG, WebP, and GIF for free. No upload, 100% private.">
+  <meta property="og:title" content="Free Image Converter - PNG, JPG, WebP, GIF, AVIF, ICO | WithoutAccount">
+  <meta property="og:description" content="Convert images between PNG, JPG, WebP, GIF, AVIF, and ICO for free. No upload, 100% private.">
   <meta property="og:url" content="https://withoutaccount.com/tools/image-converter">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='14' y='14' width='72' height='72' rx='18' fill='%23234b7a'/><path d='M32 38h36v8H48l20 16v10H32v-8h20L32 48z' fill='white'/></svg>">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="/assets/icon.svg">
+  <link rel="icon" type="image/x-icon" href="/assets/icon.ico">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,7 +67,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Image Converter",
-    "description": "Convert images between PNG, JPG, WebP, and GIF for free",
+    "description": "Convert images between PNG, JPG, WebP, GIF, AVIF, and ICO for free",
     "url": "https://withoutaccount.com/tools/image-converter",
     "applicationCategory": "UtilityApplication",
     "operatingSystem": "Any",
@@ -252,7 +253,7 @@
         </div>
         <h1 class="text-3xl md:text-4xl font-bold mb-3">Image Converter</h1>
         <p class="text-[var(--text-secondary)] max-w-xl mx-auto">
-          Convert images between PNG, JPG, WebP, and GIF. 100% client-side — your files never leave your device.
+          Convert images between PNG, JPG, WebP, GIF, AVIF, and ICO. 100% client-side — your files never leave your device.
         </p>
       </div>
       
@@ -268,7 +269,7 @@
       
       <!-- Drop Zone -->
       <div id="drop-zone" class="drop-zone mb-8">
-        <input type="file" id="file-input" accept="image/*" multiple class="hidden">
+        <input type="file" id="file-input" accept="image/*,.ico" multiple class="hidden">
         <div class="flex flex-col items-center gap-4">
           <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background: var(--accent-gradient);">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +278,7 @@
           </div>
           <div>
             <p class="text-lg font-medium mb-1">Drop images here or click to browse</p>
-            <p class="text-sm text-[var(--text-secondary)]">Supports PNG, JPG, WebP, GIF • Multiple files allowed</p>
+            <p class="text-sm text-[var(--text-secondary)]">Supports PNG, JPG, WebP, GIF, AVIF, ICO • Multiple files allowed</p>
           </div>
         </div>
       </div>
@@ -293,7 +294,9 @@
             <button class="format-btn active" data-format="png">PNG</button>
             <button class="format-btn" data-format="jpeg">JPG</button>
             <button class="format-btn" data-format="webp">WebP</button>
+            <button class="format-btn" data-format="avif">AVIF</button>
             <button class="format-btn" data-format="gif">GIF</button>
+            <button class="format-btn" data-format="ico">ICO</button>
           </div>
         </div>
         

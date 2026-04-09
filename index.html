@@ -28,7 +28,8 @@
   <meta name="twitter:description" content="Practical browser-based tools for images, video, PDFs, text, and more. No account, no uploads, no clutter.">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='14' y='14' width='72' height='72' rx='18' fill='%23234b7a'/><path d='M32 38h36v8H48l20 16v10H32v-8h20L32 48z' fill='white'/></svg>">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="/assets/icon.svg">
+  <link rel="icon" type="image/x-icon" href="/assets/icon.ico">
   
   <!-- Fonts - Non-blocking with preconnect and preload -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,51 +67,53 @@
   
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "WithoutAccount",
-    "description": "Free online tools with no ads, no account required",
-    "url": "https://withoutaccount.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://withoutaccount.com/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "WithoutAccount",
+      "description": "Free online tools with no ads, no account required",
+      "url": "https://withoutaccount.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://withoutaccount.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Is WithoutAccount completely free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, all tools on WithoutAccount are 100% free to use. There are no hidden fees, premium subscriptions, or paywalls."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Is my data private and secure?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. All processing happens locally in your browser using JavaScript. Your files and data are never uploaded to our servers, ensuring complete privacy."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Do I need to create an account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, you do not need to create an account or sign up to use any of our tools. We believe in providing instant access without barriers."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Does it work on mobile devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, our website is fully responsive and works on desktops, tablets, and mobile phones, so you can use our tools anywhere."
+        }
+      }]
     }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "Is WithoutAccount completely free?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, all tools on WithoutAccount are 100% free to use. There are no hidden fees, premium subscriptions, or paywalls."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Is my data private and secure?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Absolutely. All processing happens locally in your browser using JavaScript. Your files and data are never uploaded to our servers, ensuring complete privacy."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Do I need to create an account?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No, you do not need to create an account or sign up to use any of our tools. We believe in providing instant access without barriers."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Does it work on mobile devices?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, our website is fully responsive and works on desktops, tablets, and mobile phones, so you can use our tools anywhere."
-      }
-    }]
-  }
+  ]
   </script>
 </head>
 <body class="min-h-screen">

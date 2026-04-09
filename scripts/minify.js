@@ -43,6 +43,7 @@ const CONFIG = {
         'sitemap.xml',
         'firebase.json',
         '.firebaserc',
+        'assets/**/*',
         'js/vendor/**/*'
     ],
 

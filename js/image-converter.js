@@ -83,7 +83,7 @@
         e.stopPropagation();
         dropZone.classList.remove('dragover');
 
-        const droppedFiles = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(isSupportedImageFile);
         if (droppedFiles.length > 0) {
             addFiles(droppedFiles);
         }
@@ -93,10 +93,17 @@
      * Handle file input selection
      */
     function handleFileSelect(e) {
-        const selectedFiles = Array.from(e.target.files);
+        const selectedFiles = Array.from(e.target.files).filter(isSupportedImageFile);
         if (selectedFiles.length > 0) {
             addFiles(selectedFiles);
         }
+    }
+
+    /**
+     * Check whether a file is a supported image input.
+     */
+    function isSupportedImageFile(file) {
+        return file.type.startsWith('image/') || /\.(png|jpe?g|webp|gif|avif|ico)$/i.test(file.name);
     }
 
     /**
@@ -204,7 +211,7 @@
      */
     function updateQualityVisibility() {
         // Quality only applies to lossy formats
-        const showQuality = ['jpeg', 'webp'].includes(selectedFormat);
+        const showQuality = ['jpeg', 'webp', 'avif'].includes(selectedFormat);
         qualitySection.style.display = showQuality ? 'block' : 'none';
     }
 
@@ -268,8 +275,14 @@
     function convertImage(file, format, quality) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            img.onload = () => {
+            img.onload = async () => {
                 try {
+                    if (format === 'ico') {
+                        const icoBlob = await createIcoBlob(img);
+                        resolve(createConvertedFile(file, icoBlob, format));
+                        return;
+                    }
+
                     const canvas = document.createElement('canvas');
                     canvas.width = img.naturalWidth;
                     canvas.height = img.naturalHeight;
@@ -287,22 +300,8 @@
                     const mimeType = getMimeType(format);
                     const qualityValue = ['jpeg', 'webp'].includes(format) ? quality : undefined;
 
-                    canvas.toBlob((blob) => {
-                        if (blob) {
-                            const extension = format === 'jpeg' ? 'jpg' : format;
-                            const newName = file.name.replace(/\.[^/.]+$/, `.${extension}`);
-
-                            resolve({
-                                name: newName,
-                                blob: blob,
-                                url: URL.createObjectURL(blob),
-                                size: blob.size,
-                                originalSize: file.size
-                            });
-                        } else {
-                            reject(new Error('Failed to create blob'));
-                        }
-                    }, mimeType, qualityValue);
+                    const blob = await canvasToBlob(canvas, mimeType, qualityValue);
+                    resolve(createConvertedFile(file, blob, format));
                 } catch (error) {
                     reject(error);
                 }
@@ -321,9 +320,82 @@
             'png': 'image/png',
             'jpeg': 'image/jpeg',
             'webp': 'image/webp',
-            'gif': 'image/gif'
+            'gif': 'image/gif',
+            'avif': 'image/avif'
         };
         return types[format] || 'image/png';
+    }
+
+    /**
+     * Convert a canvas to a Blob.
+     */
+    function canvasToBlob(canvas, mimeType, quality) {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
+                } else {
+                    reject(new Error('Failed to create blob'));
+                }
+            }, mimeType, quality);
+        });
+    }
+
+    /**
+     * Create the converted file object used by the UI and downloader.
+     */
+    function createConvertedFile(file, blob, format) {
+        const extension = format === 'jpeg' ? 'jpg' : format;
+        const newName = file.name.replace(/\.[^/.]+$/, `.${extension}`);
+
+        return {
+            name: newName,
+            blob: blob,
+            url: URL.createObjectURL(blob),
+            size: blob.size,
+            originalSize: file.size
+        };
+    }
+
+    /**
+     * Build a single-image ICO file from a canvas-rendered PNG.
+     */
+    async function createIcoBlob(img) {
+        const iconSize = 256;
+        const canvas = document.createElement('canvas');
+        canvas.width = iconSize;
+        canvas.height = iconSize;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, iconSize, iconSize);
+
+        const scale = Math.min(iconSize / img.naturalWidth, iconSize / img.naturalHeight);
+        const drawWidth = img.naturalWidth * scale;
+        const drawHeight = img.naturalHeight * scale;
+        const drawX = (iconSize - drawWidth) / 2;
+        const drawY = (iconSize - drawHeight) / 2;
+
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+
+        const pngBlob = await canvasToBlob(canvas, 'image/png');
+        const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+        const icoBytes = new Uint8Array(22 + pngBytes.length);
+        const view = new DataView(icoBytes.buffer);
+
+        view.setUint16(0, 0, true);
+        view.setUint16(2, 1, true);
+        view.setUint16(4, 1, true);
+        icoBytes[6] = 0;
+        icoBytes[7] = 0;
+        icoBytes[8] = 0;
+        icoBytes[9] = 0;
+        view.setUint16(10, 1, true);
+        view.setUint16(12, 32, true);
+        view.setUint32(14, pngBytes.length, true);
+        view.setUint32(18, 22, true);
+        icoBytes.set(pngBytes, 22);
+
+        return new Blob([icoBytes], { type: 'image/x-icon' });
     }
 
     /**
