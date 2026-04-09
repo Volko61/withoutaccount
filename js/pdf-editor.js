@@ -68,7 +68,8 @@
             this.font = settings.font || 'Inter';
             this.fontSize = settings.size || 24;
             this.color = settings.color || '#000000';
-            this.lineHeight = 1.2;
+            this.alignment = settings.align || 'center';
+            this.lineSpacing = settings.lineSpacing || 1.2;
             this.updateSize();
         }
 
@@ -84,8 +85,10 @@
                 maxWidth = Math.max(maxWidth, metrics.width);
             });
 
-            this.width = Math.max(50, maxWidth + 10);
-            this.height = (this.fontSize * this.lineHeight * lines.length);
+            const paddingX = Math.max(12, Math.round(this.fontSize * 0.35));
+            const paddingY = Math.max(12, Math.round(this.fontSize * 0.3));
+            this.width = Math.max(50, maxWidth + paddingX * 2);
+            this.height = (this.fontSize * this.lineSpacing * lines.length) + paddingY * 2;
         }
 
         draw(ctx) {
@@ -96,14 +99,16 @@
             ctx.font = `${this.fontSize}px ${this.font}, sans-serif`;
             ctx.fillStyle = this.color;
             ctx.textBaseline = 'top';
-            ctx.textAlign = 'center'; // Center alignment simplifies rotation
+            ctx.textAlign = this.alignment;
 
             const lines = this.text.split('\n');
-            const totalHeight = this.fontSize * this.lineHeight * lines.length;
-            let startY = -totalHeight / 2;
+            const totalHeight = this.fontSize * this.lineSpacing * lines.length;
+            const paddingY = (this.height - totalHeight) / 2;
+            const startY = -this.height / 2 + paddingY;
+            const anchorX = this.alignment === 'left' ? -this.width / 2 : this.alignment === 'right' ? this.width / 2 : 0;
 
             lines.forEach((line, i) => {
-                ctx.fillText(line, 0, startY + (i * this.fontSize * this.lineHeight));
+                ctx.fillText(line, anchorX, startY + (i * this.fontSize * this.lineSpacing));
             });
             ctx.restore();
         }
@@ -217,7 +222,8 @@
         pdfFileBytes: null,
         currentPage: 1,
         numPages: 0,
-        scale: 1.5,
+        baseRenderScale: 1.5,
+        zoom: 1,
         pagesData: {}, // { pageNum: [objects] }
 
         canvas: null, ctx: null,
@@ -227,16 +233,22 @@
         isDrawing: false,
         isDragging: false,
         isResizing: false,
+        isPanning: false,
         resizeHandle: null,
         startX: 0, startY: 0,
         lastX: 0, lastY: 0,
         dragOffsetX: 0, dragOffsetY: 0,
+        panStartX: 0,
+        panStartY: 0,
+        panScrollLeft: 0,
+        panScrollTop: 0,
+        spacePressed: false,
 
         brushSize: 5,
         brushColor: '#000000',
         brushOpacity: 100,
 
-        textSettings: { text: 'Type here', font: 'Inter', size: 24, color: '#000000' },
+        textSettings: { text: 'Type here', font: 'Inter', size: 24, color: '#000000', align: 'center', lineSpacing: 1.2 },
         shapeSettings: { type: 'rect', strokeColor: '#ff0000', fillColor: '#000000', strokeWidth: 3, filled: false },
 
         currentDrawing: null,
@@ -274,8 +286,83 @@
 
         state.canvas = mainCanvas;
         state.ctx = mainCanvas.getContext('2d');
+        mainCanvas.style.transformOrigin = 'top left';
 
         bindEvents();
+    }
+
+    function clampZoom(value) {
+        return Math.max(0.5, Math.min(3, value));
+    }
+
+    function updateCanvasDisplaySize() {
+        const displayWidth = state.canvasWidth * state.zoom;
+        const displayHeight = state.canvasHeight * state.zoom;
+
+        mainCanvas.style.width = displayWidth + 'px';
+        mainCanvas.style.height = displayHeight + 'px';
+        canvasWrapper.style.width = displayWidth + 'px';
+        canvasWrapper.style.height = displayHeight + 'px';
+    }
+
+    function centerWorkspace() {
+        requestAnimationFrame(() => {
+            const maxScrollLeft = Math.max(0, canvasContainer.scrollWidth - canvasContainer.clientWidth);
+            const maxScrollTop = Math.max(0, canvasContainer.scrollHeight - canvasContainer.clientHeight);
+            canvasContainer.scrollLeft = maxScrollLeft / 2;
+            canvasContainer.scrollTop = maxScrollTop / 2;
+        });
+    }
+
+    function setZoom(nextZoom, anchorEvent, recenter = false) {
+        const previousZoom = state.zoom;
+        const clampedZoom = clampZoom(nextZoom);
+
+        if (clampedZoom === previousZoom) {
+            if (recenter) {
+                centerWorkspace();
+            }
+            return;
+        }
+
+        state.zoom = clampedZoom;
+        updateCanvasDisplaySize();
+
+        if (recenter) {
+            centerWorkspace();
+            updateZoomLabel();
+            render();
+            updateCanvasCursor();
+            return;
+        }
+
+        const rect = canvasContainer.getBoundingClientRect();
+        const anchorX = anchorEvent ? anchorEvent.clientX - rect.left + canvasContainer.scrollLeft : canvasContainer.scrollLeft + canvasContainer.clientWidth / 2;
+        const anchorY = anchorEvent ? anchorEvent.clientY - rect.top + canvasContainer.scrollTop : canvasContainer.scrollTop + canvasContainer.clientHeight / 2;
+        const focusX = anchorX / previousZoom;
+        const focusY = anchorY / previousZoom;
+
+        canvasContainer.scrollLeft = focusX * state.zoom - (anchorEvent ? anchorEvent.clientX - rect.left : canvasContainer.clientWidth / 2);
+        canvasContainer.scrollTop = focusY * state.zoom - (anchorEvent ? anchorEvent.clientY - rect.top : canvasContainer.clientHeight / 2);
+        updateZoomLabel();
+        render();
+        updateCanvasCursor();
+    }
+
+    function updateZoomLabel() {
+        const zoomValue = document.getElementById('zoom-value');
+        if (zoomValue) {
+            zoomValue.textContent = Math.round(state.zoom * 100) + '%';
+        }
+    }
+
+    function resizeTextObjectKeepingCenter(textObj, updateFn) {
+        const centerX = textObj.x + textObj.width / 2;
+        const centerY = textObj.y + textObj.height / 2;
+        updateFn();
+        textObj.updateSize();
+        textObj.x = centerX - textObj.width / 2;
+        textObj.y = centerY - textObj.height / 2;
     }
 
     function bindEvents() {
@@ -295,17 +382,27 @@
 
         toolButtons.forEach(btn => btn.addEventListener('click', () => selectTool(btn.dataset.tool)));
 
+        canvasContainer.addEventListener('mousedown', onWorkspaceMouseDown);
+        canvasContainer.addEventListener('mousemove', onWorkspaceMouseMove);
+        canvasContainer.addEventListener('mouseup', onWorkspaceMouseUp);
+        canvasContainer.addEventListener('mouseleave', onWorkspaceMouseUp);
+        canvasContainer.addEventListener('wheel', onWorkspaceWheel, { passive: false });
+
         mainCanvas.addEventListener('mousedown', onCanvasMouseDown);
         mainCanvas.addEventListener('mousemove', onCanvasMouseMove);
         mainCanvas.addEventListener('mouseup', onCanvasMouseUp);
         mainCanvas.addEventListener('mouseleave', onCanvasMouseLeave);
         mainCanvas.addEventListener('dblclick', onCanvasDoubleClick);
+        mainCanvas.addEventListener('wheel', onCanvasWheel, { passive: false });
 
         document.getElementById('undo-btn').addEventListener('click', undo);
         document.getElementById('redo-btn').addEventListener('click', redo);
         document.getElementById('delete-object-btn').addEventListener('click', deleteSelectedObject);
         document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
         document.getElementById('export-btn').addEventListener('click', exportPDF);
+        document.getElementById('zoom-in').addEventListener('click', () => setZoom(state.zoom + 0.12));
+        document.getElementById('zoom-out').addEventListener('click', () => setZoom(state.zoom - 0.12));
+        document.getElementById('zoom-reset').addEventListener('click', () => setZoom(1, null, true));
 
         prevPageBtn.addEventListener('click', () => changePage(-1));
         nextPageBtn.addEventListener('click', () => changePage(1));
@@ -313,6 +410,9 @@
         addImageInput.addEventListener('change', e => { if (e.target.files[0]) addImageToCanvas(e.target.files[0]); });
 
         document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+        document.addEventListener('mousemove', onWorkspaceMouseMove);
+        document.addEventListener('mouseup', onWorkspaceMouseUp);
         document.addEventListener('mousemove', updateBrushCursor);
 
         // Touch support
@@ -336,6 +436,51 @@
         onCanvasMouseUp(e);
     }
 
+    function onCanvasWheel(e) {
+        if (!state.pdfDoc) return;
+
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.12 : 0.12;
+            setZoom(state.zoom + delta, e);
+        }
+    }
+
+    function onWorkspaceWheel(e) {
+        if (!state.pdfDoc) return;
+
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.12 : 0.12;
+            setZoom(state.zoom + delta, e);
+        }
+    }
+
+    function onWorkspaceMouseDown(e) {
+        if (!state.pdfDoc) return;
+        if (e.target !== canvasContainer) return;
+        if (e.button !== 0) return;
+
+        state.isPanning = true;
+        state.panStartX = e.clientX;
+        state.panStartY = e.clientY;
+        state.panScrollLeft = canvasContainer.scrollLeft;
+        state.panScrollTop = canvasContainer.scrollTop;
+        updateCanvasCursor();
+    }
+
+    function onWorkspaceMouseMove(e) {
+        if (!state.isPanning) return;
+        canvasContainer.scrollLeft = state.panScrollLeft - (e.clientX - state.panStartX);
+        canvasContainer.scrollTop = state.panScrollTop - (e.clientY - state.panStartY);
+    }
+
+    function onWorkspaceMouseUp() {
+        if (!state.isPanning) return;
+        state.isPanning = false;
+        updateCanvasCursor();
+    }
+
     async function loadPDF(file) {
         try {
             // FIX: Clone the buffer to ensure it remains valid even if detached later
@@ -349,6 +494,7 @@
 
             dropZone.classList.add('hidden');
             editor.classList.remove('hidden');
+            state.zoom = 1;
 
             // Initialize pages data
             state.pagesData = {};
@@ -357,7 +503,9 @@
             }
 
             await renderPage(state.currentPage);
+            centerWorkspace();
             updatePageNav();
+            updateZoomLabel();
             updateToolOptions();
 
         } catch (err) {
@@ -468,6 +616,7 @@
         });
         render();
         updateObjectsList();
+        centerWorkspace();
     }
 
     // Improved saveHistory that actually helps
@@ -488,12 +637,13 @@
         if (!state.pdfDoc) return;
 
         const page = await state.pdfDoc.getPage(pageNum);
-        const viewport = page.getViewport({ scale: state.scale });
+        const viewport = page.getViewport({ scale: state.baseRenderScale });
 
         state.canvasWidth = viewport.width;
         state.canvasHeight = viewport.height;
         mainCanvas.width = state.canvasWidth;
         mainCanvas.height = state.canvasHeight;
+        updateCanvasDisplaySize();
 
         // Render PDF page to an offscreen canvas
         const offscreenCanvas = document.createElement('canvas');
@@ -543,6 +693,7 @@
             saveCurrentPage();
             state.currentPage = newPage;
             await renderPage(state.currentPage);
+            centerWorkspace();
             updatePageNav();
         }
     }
@@ -592,7 +743,13 @@
 
     function updateCanvasCursor() {
         const cursors = { select: 'default', text: 'text', brush: 'none', eraser: 'none', image: 'default', shapes: 'crosshair' };
-        mainCanvas.style.cursor = cursors[state.currentTool] || 'default';
+        if (state.isPanning) {
+            mainCanvas.style.cursor = 'grabbing';
+        } else if (state.currentTool === 'select' && state.spacePressed) {
+            mainCanvas.style.cursor = 'grab';
+        } else {
+            mainCanvas.style.cursor = cursors[state.currentTool] || 'default';
+        }
     }
 
     function updateBrushCursor(e) {
@@ -641,6 +798,16 @@
         state.lastX = x; state.lastY = y;
         state.isDrawing = true;
 
+        if (e.button === 1 || e.altKey || state.spacePressed) {
+            state.isPanning = true;
+            state.panStartX = e.clientX;
+            state.panStartY = e.clientY;
+            state.panScrollLeft = canvasContainer.scrollLeft;
+            state.panScrollTop = canvasContainer.scrollTop;
+            updateCanvasCursor();
+            return;
+        }
+
         const tool = state.currentTool;
 
         if (tool === 'select') {
@@ -674,8 +841,17 @@
             state.currentDrawing.addPoint(x, y, true);
             state.objects.push(state.currentDrawing);
         } else if (tool === 'text') {
-            // Start text text selection/creation box
-            state.textStart = { x, y };
+            const textObj = new TextObject(state.textSettings.text, x, y, state.textSettings);
+            textObj.x = x - textObj.width / 2;
+            textObj.y = y - textObj.height / 2;
+            state.objects.push(textObj);
+            state.selectedObject = textObj;
+            render();
+            updateObjectsList();
+            updateToolOptions();
+
+            enterTextEditMode(textObj);
+            selectTool('select');
         } else if (tool === 'shapes') {
             state.shapeStart = { x, y };
         } else if (tool === 'eraser') {
@@ -695,6 +871,13 @@
     }
 
     function onCanvasMouseMove(e) {
+        if (state.isPanning) {
+            canvasContainer.scrollLeft = state.panScrollLeft - (e.clientX - state.panStartX);
+            canvasContainer.scrollTop = state.panScrollTop - (e.clientY - state.panStartY);
+            updateCanvasCursor();
+            return;
+        }
+
         if (!state.isDrawing) return;
         const { x, y } = getCanvasCoords(e);
         const tool = state.currentTool;
@@ -711,37 +894,32 @@
         } else if (tool === 'brush' && state.currentDrawing) {
             state.currentDrawing.addPoint(x, y, false);
             render();
-        } else if ((tool === 'shapes' && state.shapeStart) || (tool === 'text' && state.textStart)) {
+        } else if (tool === 'shapes' && state.shapeStart) {
             render();
-            const start = tool === 'text' ? state.textStart : state.shapeStart;
+            const start = state.shapeStart;
             const w = x - start.x;
             const h = y - start.y;
 
             state.ctx.lineWidth = 1;
             state.ctx.setLineDash([5, 5]);
-            state.ctx.strokeStyle = tool === 'text' ? '#000000' : state.shapeSettings.strokeColor;
+            state.ctx.strokeStyle = state.shapeSettings.strokeColor;
 
-            if (tool === 'shapes') {
-                // Check if fill is enabled for preview
-                if (state.shapeSettings.filled) {
-                    state.ctx.fillStyle = state.shapeSettings.fillColor;
-                    if (state.shapeSettings.type === 'rect') state.ctx.fillRect(start.x, start.y, w, h);
-                    else {
-                        state.ctx.beginPath();
-                        state.ctx.ellipse(start.x + w / 2, start.y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
-                        state.ctx.fill();
-                    }
-                }
-
-                if (state.shapeSettings.type === 'rect') state.ctx.strokeRect(start.x, start.y, w, h);
+            // Check if fill is enabled for preview
+            if (state.shapeSettings.filled) {
+                state.ctx.fillStyle = state.shapeSettings.fillColor;
+                if (state.shapeSettings.type === 'rect') state.ctx.fillRect(start.x, start.y, w, h);
                 else {
                     state.ctx.beginPath();
                     state.ctx.ellipse(start.x + w / 2, start.y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
-                    state.ctx.stroke();
+                    state.ctx.fill();
                 }
-            } else {
-                // Text Box Preview
-                state.ctx.strokeRect(start.x, start.y, w, h);
+            }
+
+            if (state.shapeSettings.type === 'rect') state.ctx.strokeRect(start.x, start.y, w, h);
+            else {
+                state.ctx.beginPath();
+                state.ctx.ellipse(start.x + w / 2, start.y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
+                state.ctx.stroke();
             }
 
             state.ctx.setLineDash([]);
@@ -786,38 +964,12 @@
             render();
         }
 
-        if (tool === 'text' && state.textStart) {
-            const w = Math.abs(x - state.textStart.x);
-            // Default size if just clicked
-            const fontSize = state.textSettings.size || 24;
-
-            const textX = Math.min(state.textStart.x, x);
-            const textY = Math.min(state.textStart.y, y);
-
-            const textObj = new TextObject(state.textSettings.text, textX, textY, state.textSettings);
-
-            // If dragging created a reasonable width, maybe use it? 
-            // TextObject auto-sizes, but we can set its position.
-            // For now, let's just create it and immediately enter edit mode.
-
-            state.objects.push(textObj);
-            state.selectedObject = textObj;
-            state.textStart = null; // Clear start
-
-            // Enter edit mode immediately
-            render();
-            enterTextEditMode(textObj);
-
-            pushHistoryState();
-            selectTool('select');
-            updateToolOptions();
-            updateObjectsList();
-        }
-
         state.isDrawing = false;
         state.isDragging = false;
         state.isResizing = false;
+        state.isPanning = false;
         state.resizeHandle = null;
+        updateCanvasCursor();
     }
 
     function onCanvasDoubleClick(e) {
@@ -844,36 +996,43 @@
             // Use outline instead of border to avoid layout shifts (box model)
             textarea.style.border = 'none';
             textarea.style.outline = '1px dashed #6366f1';
-            textarea.style.padding = '0';
+            textarea.style.padding = '6px 10px';
             textarea.style.margin = '0';
             textarea.style.overflow = 'hidden';
             textarea.style.resize = 'none';
             textarea.style.zIndex = '100';
-            textarea.style.whiteSpace = 'pre'; // Prevent wrapping to match canvas text
+            textarea.style.whiteSpace = 'pre';
+            textarea.style.overflowWrap = 'normal';
+            textarea.style.wordBreak = 'normal';
             textarea.style.boxSizing = 'border-box';
             canvasWrapper.appendChild(textarea);
         }
 
-        // Match style
-        // Need to calculate screen coordinates relative to canvas wrapper
         const scaleX = mainCanvas.offsetWidth / mainCanvas.width;
         const scaleY = mainCanvas.offsetHeight / mainCanvas.height;
+        const centerX = (textObj.x + textObj.width / 2) * scaleX;
+        const centerY = (textObj.y + textObj.height / 2) * scaleY;
 
         textarea.value = textObj.text;
-
-        // Match dimensions exactly to avoid jumps
-        // TextObject uses padding in width calculation (approx 10px), and renders centered.
-        // We set textarea to exact width/height and center text.
-
-        textarea.style.left = (textObj.x * scaleX) + 'px';
-        textarea.style.top = (textObj.y * scaleY) + 'px';
-        textarea.style.width = (textObj.width * scaleX) + 'px';
-        textarea.style.height = (textObj.height * scaleY) + 'px';
-
         textarea.style.font = `${textObj.fontSize * scaleY}px ${textObj.font}, sans-serif`;
         textarea.style.color = textObj.color;
-        textarea.style.textAlign = 'center';
-        textarea.style.lineHeight = textObj.lineHeight;
+        textarea.style.textAlign = textObj.alignment;
+        textarea.style.lineHeight = textObj.lineSpacing;
+
+        const syncOverlaySize = () => {
+            textarea.style.width = '1px';
+            textarea.style.height = '1px';
+            textarea.style.left = '0px';
+            textarea.style.top = '0px';
+            const contentWidth = Math.max(textObj.width * scaleX, textarea.scrollWidth + 2);
+            const contentHeight = Math.max(textObj.height * scaleY, textarea.scrollHeight + 2);
+            textarea.style.width = contentWidth + 'px';
+            textarea.style.height = contentHeight + 'px';
+            textarea.style.left = (centerX - contentWidth / 2) + 'px';
+            textarea.style.top = (centerY - contentHeight / 2) + 'px';
+        };
+
+        syncOverlaySize();
 
         textarea.style.display = 'block';
         textarea.focus();
@@ -884,9 +1043,13 @@
         render();
 
         const finishEdit = () => {
+            const originalCenterX = textObj.x + textObj.width / 2;
+            const originalCenterY = textObj.y + textObj.height / 2;
             textObj.text = textarea.value;
             textObj.visible = originalVisible;
             textObj.updateSize(); // This recalculates width/height based on new text
+            textObj.x = originalCenterX - textObj.width / 2;
+            textObj.y = originalCenterY - textObj.height / 2;
 
             // Check if sidebar exists before accessing
             const sidebarInput = document.getElementById('tool-text-content');
@@ -902,6 +1065,9 @@
         };
 
         textarea.onblur = finishEdit;
+        textarea.oninput = () => {
+            syncOverlaySize();
+        };
         textarea.onkeydown = (e) => {
             if (e.key === 'Escape') {
                 textarea.blur();
@@ -988,6 +1154,13 @@
         // Shortcuts!
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
+        if (e.code === 'Space') {
+            e.preventDefault();
+            state.spacePressed = true;
+            updateCanvasCursor();
+            return;
+        }
+
         if (e.key === 'Delete' || e.key === 'Backspace') {
             deleteSelectedObject();
         } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
@@ -1025,6 +1198,13 @@
             render();
             // Don't push history for every key press, ideally debounce. 
             // For now, let's just trigger render.
+        }
+    }
+
+    function onKeyUp(e) {
+        if (e.code === 'Space') {
+            state.spacePressed = false;
+            updateCanvasCursor();
         }
     }
 
@@ -1074,6 +1254,14 @@
                         <input type="color" class="color-picker-btn" id="obj-color" value="${obj.color}"></div>
                         <div class="mb-2"><div class="slider-label"><span>Font Size</span></div>
                         <input type="number" class="size-input" id="obj-font-size" value="${obj.fontSize}"></div>`;
+                    html += `<div class="mb-2"><div class="slider-label"><span>Justification</span></div>
+                        <select class="size-input" id="obj-align">
+                            <option value="left" ${obj.alignment === 'left' ? 'selected' : ''}>Left</option>
+                            <option value="center" ${obj.alignment === 'center' ? 'selected' : ''}>Center</option>
+                            <option value="right" ${obj.alignment === 'right' ? 'selected' : ''}>Right</option>
+                        </select></div>
+                        <div class="mb-2"><div class="slider-label"><span>Line Spacing</span></div>
+                        <input type="number" class="size-input" id="obj-line-spacing" step="0.1" min="0.8" max="3" value="${obj.lineSpacing}"></div>`;
                 } else if (obj instanceof ShapeObject) {
                     html += `
                         <div class="mb-2"><div class="slider-label"><span>Stroke Color</span></div>
@@ -1097,6 +1285,14 @@
                 <input type="color" class="color-picker-btn" id="tool-text-color" value="${state.textSettings.color}"></div>
                 <div class="mb-3"><div class="slider-label"><span>Size</span></div>
                 <input type="number" class="size-input" id="tool-text-size" value="${state.textSettings.size}"></div>
+                <div class="mb-3"><div class="slider-label"><span>Justification</span></div>
+                <select class="size-input" id="tool-text-align">
+                    <option value="left" ${state.textSettings.align === 'left' ? 'selected' : ''}>Left</option>
+                    <option value="center" ${state.textSettings.align === 'center' ? 'selected' : ''}>Center</option>
+                    <option value="right" ${state.textSettings.align === 'right' ? 'selected' : ''}>Right</option>
+                </select></div>
+                <div class="mb-3"><div class="slider-label"><span>Line Spacing</span></div>
+                <input type="number" class="size-input" id="tool-text-line-spacing" step="0.1" min="0.8" max="3" value="${state.textSettings.lineSpacing}"></div>
             `;
         } else if (tool === 'brush') {
             html = `
@@ -1132,6 +1328,8 @@
             document.getElementById('tool-text-content').addEventListener('input', e => state.textSettings.text = e.target.value);
             document.getElementById('tool-text-color').addEventListener('input', e => state.textSettings.color = e.target.value);
             document.getElementById('tool-text-size').addEventListener('input', e => state.textSettings.size = parseInt(e.target.value));
+            document.getElementById('tool-text-align').addEventListener('change', e => state.textSettings.align = e.target.value);
+            document.getElementById('tool-text-line-spacing').addEventListener('input', e => state.textSettings.lineSpacing = parseFloat(e.target.value));
         }
         if (document.getElementById('tool-brush-size')) {
             document.getElementById('tool-brush-size').addEventListener('input', e => {
@@ -1154,10 +1352,25 @@
                     render();
                 });
                 document.getElementById('obj-font-size').addEventListener('input', e => {
-                    state.selectedObject.fontSize = parseInt(e.target.value);
-                    if (state.selectedObject.updateSize) state.selectedObject.updateSize();
+                    resizeTextObjectKeepingCenter(state.selectedObject, () => {
+                        state.selectedObject.fontSize = parseInt(e.target.value);
+                    });
                     render();
                 });
+                if (document.getElementById('obj-align')) {
+                    document.getElementById('obj-align').addEventListener('change', e => {
+                        resizeTextObjectKeepingCenter(state.selectedObject, () => {
+                            state.selectedObject.alignment = e.target.value;
+                        });
+                        render();
+                    });
+                    document.getElementById('obj-line-spacing').addEventListener('input', e => {
+                        resizeTextObjectKeepingCenter(state.selectedObject, () => {
+                            state.selectedObject.lineSpacing = parseFloat(e.target.value);
+                        });
+                        render();
+                    });
+                }
             }
             if (document.getElementById('obj-stroke')) {
                 document.getElementById('obj-stroke').addEventListener('input', e => {
@@ -1198,7 +1411,7 @@
                 const { width: pageWidth, height: pageHeight } = page.getSize();
 
                 const pdfJsPage = await state.pdfDoc.getPage(pageNum);
-                const viewport = pdfJsPage.getViewport({ scale: state.scale });
+                const viewport = pdfJsPage.getViewport({ scale: state.baseRenderScale });
 
                 const ratioX = pageWidth / viewport.width;
                 const ratioY = pageHeight / viewport.height;
@@ -1216,14 +1429,32 @@
                     if (obj.type === 'text') {
                         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
                         const fontSize = obj.fontSize * ratioY;
-                        const textY = pageHeight - (obj.y * ratioY) - fontSize;
+                        const lineSpacing = obj.lineSpacing || 1.2;
+                        const lines = obj.text.split('\n');
+                        const blockHeight = fontSize * lineSpacing * lines.length;
+                        const boxLeft = obj.x * ratioX;
+                        const boxTop = obj.y * ratioY;
+                        const boxWidth = obj.width * ratioX;
+                        const boxHeight = obj.height * ratioY;
+                        const startY = boxTop + (boxHeight - blockHeight) / 2;
 
-                        page.drawText(obj.text, {
-                            x: obj.x * ratioX,
-                            y: textY,
-                            size: fontSize,
-                            font: font,
-                            color: hexToRGB(obj.color)
+                        lines.forEach((line, index) => {
+                            const lineWidth = font.widthOfTextAtSize(line, fontSize);
+                            let lineX = boxLeft;
+                            if (obj.alignment === 'center') {
+                                lineX = boxLeft + (boxWidth - lineWidth) / 2;
+                            } else if (obj.alignment === 'right') {
+                                lineX = boxLeft + boxWidth - lineWidth;
+                            }
+
+                            const lineTop = startY + index * fontSize * lineSpacing;
+                            page.drawText(line, {
+                                x: lineX,
+                                y: pageHeight - (lineTop + fontSize),
+                                size: fontSize,
+                                font: font,
+                                color: hexToRGB(obj.color)
+                            });
                         });
                     }
                     else if (obj.type === 'shape' && obj.shapeType === 'rect') {

@@ -191,8 +191,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 24px;
       background: #1a1a2e;
-      overflow: hidden;
+      overflow: auto;
       position: relative;
     }
     
@@ -356,9 +357,9 @@
     .brush-cursor.visible { opacity: 1; }
     
     .fullscreen-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
+      position: fixed;
+      top: 76px;
+      right: 18px;
       z-index: 50;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
@@ -371,7 +372,7 @@
     .fullscreen-btn:hover { background: var(--bg-tertiary); }
     
     .page-nav {
-      position: absolute;
+      position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
@@ -383,6 +384,45 @@
       border-radius: 30px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       border: 1px solid var(--border-color);
+    }
+
+    .zoom-controls {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 50;
+    }
+
+    .zoom-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      border: none;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .zoom-btn:hover { background: var(--accent-primary); color: white; }
+
+    .zoom-value {
+      min-width: 54px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
     }
     
     .page-btn {
@@ -504,6 +544,13 @@
         <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
         </button>
+
+        <div class="zoom-controls" aria-label="Zoom controls">
+          <button class="zoom-btn" id="zoom-out" title="Zoom out">-</button>
+          <span class="zoom-value" id="zoom-value">100%</span>
+          <button class="zoom-btn" id="zoom-in" title="Zoom in">+</button>
+          <button class="zoom-btn" id="zoom-reset" title="Reset zoom">1:1</button>
+        </div>
         
         <div class="canvas-wrapper" id="canvas-wrapper">
           <canvas id="main-canvas"></canvas>
